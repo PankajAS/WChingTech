@@ -7,20 +7,27 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 
 public class LoginActivity extends AppCompatActivity {
@@ -28,6 +35,7 @@ public class LoginActivity extends AppCompatActivity {
     Button btnLogin;
     ProgressDialog progressDialog;
     JSONObject jsonObject;
+    String loginUrl = "http://x.hkgws.com/x/servlet/JSONLoginServlet";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,93 +55,81 @@ public class LoginActivity extends AppCompatActivity {
                 login();
             }
         });
-
-
-
     }
 
     private void login() {
 
-        String ComapnyName = txtCompanyName.getText().toString();
-        String UserName = txtUserName.getText().toString();
-        String Passowrd = txtPasswords.getText().toString();
+        final String ComapnyName = txtCompanyName.getText().toString();
+        final String UserName = txtUserName.getText().toString();
+        final String Passowrd = txtPasswords.getText().toString();
         String device_unique_id = Settings.Secure.getString(this.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
-        try {
-            jsonObject.put("company_id",ComapnyName);
-            jsonObject.put("login_name",UserName);
-            jsonObject.put("login_password",Passowrd);
-            jsonObject.put("token2",device_unique_id);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        String url = "http://x.hkgws.com/x/servlet/JSONLoginServlet";
+
         progressDialog.setMessage("Loading....");
         progressDialog.show();
 
+        try {
+            RequestQueue requestQueue = Volley.newRequestQueue(this);
+            JSONObject jsonBody = new JSONObject();
 
-        new AsyncRequest(getApplicationContext(), jsonObject).execute(url);
-    }
+            jsonBody.put("company_id",ComapnyName);
+            jsonBody.put("login_name",UserName);
+            jsonBody.put("login_password",Passowrd);
+            jsonBody.put("token",device_unique_id);
+            final String requestBody = jsonBody.toString();
 
-    private class AsyncRequest extends AsyncTask<String, String, String> {
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, loginUrl, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
 
-        JSONObject jsonObject = new JSONObject();
-        Context context;
+                    progressDialog.dismiss();
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.putExtra("response", response);
+                    intent.putExtra("ComapnyName", ComapnyName);
+                    intent.putExtra("UserName", UserName);
+                    intent.putExtra("Passowrd", Passowrd);
+                    startActivity(intent);
+                    finish();
 
-        public AsyncRequest(Context context, JSONObject jsonObject) {
-            this.jsonObject = jsonObject;
-            this.context = context;
-
-        }
-
-
-        @Override
-        protected String doInBackground(String... url) {
-
-
-            final String URL = url[0].toString();
-// Post params to be sent to the server
-            HashMap<String, String> params = new HashMap<String, String>();
-            // params.put("token", "AbCdEfGh123456");
-            params.put("login_name", "test");
-            params.put("company_id", "web");
-            params.put("login_password", "password");
-            params.put("token2", "123456458");
-            RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
-            JsonObjectRequest req = new JsonObjectRequest(URL, new JSONObject(params),
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            try {
-                                VolleyLog.v("Response:%n %s", response.toString(4));
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }, new Response.ErrorListener() {
+                    Log.i("VOLLEY", response);
+                }
+            }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    VolleyLog.e("Error: ", error.getMessage());
+                    Log.e("VOLLEY", error.toString());
                 }
-            });
-            queue.add(req);
-            queue.start();
+            }) {
+                @Override
+                public String getBodyContentType() {
+                    return "application/json; charset=utf-8";
+                }
 
+                @Override
+                public byte[] getBody() throws AuthFailureError {
+                    try {
+                        return requestBody == null ? null : requestBody.getBytes("utf-8");
+                    } catch (UnsupportedEncodingException uee) {
+                        VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
+                        return null;
+                    }
+                }
 
-            return null;
-        }
+                @Override
+                protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                    String responseString = "";
+                    if (response != null) {
+                        responseString = String.valueOf(response);
+                        // can get more details such as response.headers
+                    }
+                    return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
+                }
+            };
+            requestQueue.add(stringRequest);
+            requestQueue.start();
 
-        @Override
-        protected void onPostExecute(String loginresponse) {
-            progressDialog.dismiss();
-            Intent intent = new Intent(context, MainActivity.class);
-            //intent.putExtra("response", loginresponse);
-            //intent.putExtra("ComapnyName", ComapnyName);
-            //intent.putExtra("UserName", UserName);
-            //intent.putExtra("Passowrd", Passowrd);
-            startActivity(intent);
-            //finish();
-            super.onPostExecute(loginresponse);
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
+
 }
