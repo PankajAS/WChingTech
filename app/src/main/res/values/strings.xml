@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">WChingTech</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_settings">Settings</string>
+    <string name="loginTitle">惠程科技有限公司 WchingTech</string>
+</resources>
