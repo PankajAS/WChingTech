@@ -19,6 +19,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -56,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(getString(R.string.activityTitle));
         setSupportActionBar(toolbar);
         Intent intent = getIntent();
         utils = new CommonClass();
@@ -87,12 +89,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         right_Menu_adapter = new ArrayAdapter(getApplicationContext(),android.R.layout.simple_list_item_1,right_Menu_Items);
         left_drawer_list.setAdapter(left_Menu_adapter);
 
+        //set header
         LayoutInflater inflater = getLayoutInflater();
         ViewGroup header = (ViewGroup)inflater.inflate(R.layout.nav_header_main, left_drawer_list, false);
         TextView txtuserdesc = (TextView)header.findViewById(R.id.txtusername);
         txtuserdesc.setText(userdesc);
         left_drawer_list.addHeaderView(header, null, false);
 
+        //set footer
+        ViewGroup footer = (ViewGroup)inflater.inflate(R.layout.logout_event_layout, left_drawer_list, false);
+        left_drawer_list.addFooterView(footer);
+        LinearLayout linearLayout = (LinearLayout)footer.findViewById(R.id.linearlayout);
+        linearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
         right_drawer_list.setAdapter(right_Menu_adapter);
         getLeftMenu("en");
         getRightMenu();

@@ -98,8 +98,11 @@ public class LoginActivity extends AppCompatActivity {
                                 intent.putExtra("userdesc", response.getString("userdesc"));
                                 intent.putExtra("companydesc", response.getString("companydesc"));
                                 startActivity(intent);
-                                finish();
+                                //finish();
                                 progressDialog.dismiss();
+                                txtCompanyName.setText("");
+                                txtPasswords.setText("");
+                                txtUserName.setText("");
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -117,7 +120,7 @@ public class LoginActivity extends AppCompatActivity {
             requestQueue.add(req);
             requestQueue.start();
         }else{
-            Toast.makeText(getApplicationContext(),"fill the information",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(),"Please fill the required information",Toast.LENGTH_SHORT).show();
         }
 
     }

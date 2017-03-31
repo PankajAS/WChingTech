@@ -51,10 +51,7 @@ public class FacilitiesActivity extends AppCompatActivity {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-               /* Intent intentToReturn = new Intent(FacilitiesActivity.this, MainActivity.class);
-                intentToReturn.putExtra("sub_menu_page",subMenuPageUrl.get(i));
-                startActivity(intentToReturn);*/
-                util.setUserPrefs(util.SubMenuPageUrl,subMenuPageUrl.get(i),getApplicationContext());
+               util.setUserPrefs(util.SubMenuPageUrl,subMenuPageUrl.get(i),getApplicationContext());
                 finish();
             }
         });
