@@ -1,19 +1,26 @@
 package com.plusonesoftwares.plusonesoftwares.wchingtech;
 
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -26,18 +33,23 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     WebView webView;
-    String CompanyName, UserName, Passowrd,response;
-    NavigationView nav_left_view;
-    NavigationView nav_right_view;
+    String CompanyName, UserName, Passowrd,response,userdesc;
     final String leftMenu_Url = "http://x.hkgws.com/x/servlet/GetIOSMenu";
     final String rightMenu_Url = "http://x.hkgws.com/x/servlet/GetSysLanguage/";
-
-    String mainPageUrl = "http://x.hkgws.com/x/servlet/Login_process?login_name=test&login_password=passowrd&company_id=web&storecompany=N&isMobile=Y";
-
+    ListView left_drawer_list,right_drawer_list;
+    JSONArray RightMenuArray;
+    JSONArray LeftMenuArray;
+    CommonClass utils;
+    List<String> left_Menu_Items,right_Menu_Items,left_menu_icons;
+    ArrayAdapter right_Menu_adapter;
+    LeftMenuListAdapter left_Menu_adapter;
+    DrawerLayout drawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,35 +58,113 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Intent intent = getIntent();
+        utils = new CommonClass();
+        left_drawer_list = (ListView)findViewById(R.id.left_drawer_list);
+        right_drawer_list = (ListView)findViewById(R.id.right_drawer_list);
+        left_Menu_Items = new ArrayList<>();
+        right_Menu_Items = new ArrayList<>();
+        left_menu_icons = new ArrayList<>();
+        utils.setUserPrefs(utils.SubMenuPageUrl,"",getApplicationContext());
         CompanyName = intent.getStringExtra("ComapnyName");
         UserName = intent.getStringExtra("UserName");
         Passowrd = intent.getStringExtra("Passowrd");
         response = intent.getStringExtra("response");
-
+        userdesc = intent.getStringExtra("userdesc");
         webView = (WebView)findViewById(R.id.webView);
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setLoadWithOverviewMode(true);
+        webView.getSettings().setUseWideViewPort(true);
         webView.setWebViewClient(new MyBrowser());
-        webView.loadUrl(mainPageUrl);
+        webView.loadUrl("http://x.hkgws.com/x/servlet/Login_process?login_name="+UserName+"&login_password="+Passowrd+"&company_id="+CompanyName+"&storecompany="+response+"&isMobile=Y");
 
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        nav_left_view = (NavigationView) findViewById(R.id.nav_view);
-        nav_left_view.setNavigationItemSelectedListener(this);
-        nav_left_view.setItemTextColor(ColorStateList.valueOf(Color.WHITE));
+        left_Menu_adapter = new LeftMenuListAdapter(getApplicationContext(),android.R.layout.simple_list_item_1,left_Menu_Items,left_menu_icons);
+        right_Menu_adapter = new ArrayAdapter(getApplicationContext(),android.R.layout.simple_list_item_1,right_Menu_Items);
+        left_drawer_list.setAdapter(left_Menu_adapter);
 
-        nav_right_view = (NavigationView) findViewById(R.id.nav_right_view);
-        nav_right_view.setItemTextColor(ColorStateList.valueOf(Color.WHITE));
-        nav_right_view.setNavigationItemSelectedListener(this);
+        LayoutInflater inflater = getLayoutInflater();
+        ViewGroup header = (ViewGroup)inflater.inflate(R.layout.nav_header_main, left_drawer_list, false);
+        TextView txtuserdesc = (TextView)header.findViewById(R.id.txtusername);
+        txtuserdesc.setText(userdesc);
+        left_drawer_list.addHeaderView(header, null, false);
 
+        right_drawer_list.setAdapter(right_Menu_adapter);
+        getLeftMenu("en");
+        getRightMenu();
+
+    }
+
+    @Override
+    protected void onResume() {
+
+        if(utils.getUserPrefs(utils.SubMenuPageUrl, getApplicationContext())!=null && !utils.getUserPrefs(utils.SubMenuPageUrl, getApplicationContext()).isEmpty()){
+            webView.loadUrl(utils.getUserPrefs(utils.SubMenuPageUrl, getApplicationContext()));
+        }
+
+        super.onResume();
+    }
+
+    private void getRightMenu() {
         // Post params to be sent to the server
+        HashMap<String, String> params1 = new HashMap<String, String>();
+        params1.put("company_id", CompanyName);
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        JsonObjectRequest req = new JsonObjectRequest(rightMenu_Url, new JSONObject(params1),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            VolleyLog.v("Response:%n %s", response.toString(4));
+
+                            RightMenuArray = response.getJSONArray("language");
+
+                            for(int i=0;i<=RightMenuArray.length()-1;i++){
+                                JSONObject obj = RightMenuArray.getJSONObject(i);
+                                System.out.println("menu "+obj.get("description"));
+                                right_Menu_Items.add(obj.get("description").toString());
+
+                            }
+                            right_Menu_adapter.notifyDataSetChanged();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.e("Error: ", error.getMessage());
+            }
+        });
+        requestQueue.add(req);
+        requestQueue.start();
+
+        right_drawer_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                try {
+                    JSONObject jsonObject = RightMenuArray.getJSONObject(i);
+                    //jsonObject.getString("key_value");
+                    getLeftMenu(jsonObject.getString("key_value"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                drawer.closeDrawer(Gravity.END);
+            }
+        });
+
+    }
+
+    @NonNull
+    private void getLeftMenu(String language) {
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("login_name", UserName);
         params.put("company_id", CompanyName);
-        params.put("language", "en");//using defauld language on page load
+        params.put("language", language);//using defauld language on page load
 
         RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
         //call for left Menu
@@ -84,16 +174,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     public void onResponse(JSONObject response) {
                         try {
                             VolleyLog.v("Response:%n %s", response.toString(4));
-
-                            JSONArray jsonarray = response.getJSONArray("menu_base");
-                            Menu menu = nav_left_view.getMenu();
-
-                            for(int i=0;i<=jsonarray.length()-1;i++){
-                                JSONObject obj = jsonarray.getJSONObject(i);
+                            left_Menu_Items.clear();
+                            LeftMenuArray = response.getJSONArray("menu_base");
+                            for(int i=0;i<=LeftMenuArray.length()-1;i++){
+                                JSONObject obj = LeftMenuArray.getJSONObject(i);
                                 System.out.println(obj.get("menu_description"));
-                                menu.add(obj.get("menu_description").toString());
-                                System.out.println(menu.getItem(i));
+                                left_Menu_Items.add(obj.get("menu_description").toString());
+                                left_menu_icons.add("http://icons.iconarchive.com/icons/icons8/ios7/256/User-Interface-Menu-icon.png");
                             }
+                            left_Menu_adapter.notifyDataSetChanged();
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -105,46 +195,35 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
         queue.add(req);
+        queue.start();
 
-        //Call for Left Menu
-        // Post params to be sent to the server
-        HashMap<String, String> params1 = new HashMap<String, String>();
-        params.put("company_id", CompanyName);
-
-        JsonObjectRequest req1 = new JsonObjectRequest(rightMenu_Url, new JSONObject(params1),
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            VolleyLog.v("Response:%n %s", response.toString(4));
-
-                            JSONArray jsonarray = response.getJSONArray("languages");
-                            Menu menu = nav_right_view.getMenu();
-
-                            for(int i=0;i<=jsonarray.length()-1;i++){
-                                JSONObject obj = jsonarray.getJSONObject(i);
-                                System.out.println(obj.get("menu_description"));
-                                menu.add(obj.get("menu_description").toString());
-                                System.out.println(menu.getItem(i));
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
+        left_drawer_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.e("Error: ", error.getMessage());
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                try {
+                        JSONObject obj = LeftMenuArray.getJSONObject(i-1);
+                        System.out.println(obj.get("menu_description"));
+                        if(left_Menu_Items.get(i-1).toString().equals(obj.get("menu_description"))) {
+                            JSONArray array = obj.getJSONArray("submenu");
+                            utils.setUserPrefs(utils.SubMenuPageUrl,"",getApplicationContext());
+                            Intent intent = new Intent(getApplicationContext(), FacilitiesActivity.class);
+                            intent.putExtra("submenu", array.toString());
+                            startActivity(intent);
+                        }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                drawer.closeDrawer(Gravity.START);
             }
         });
-        queue.add(req1);
 
-        queue.start();
     }
 
     private class MyBrowser extends WebViewClient {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
+
             view.loadUrl(url);
             return true;
         }
@@ -190,24 +269,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-
-            webView.loadUrl("https://firebase.google.com/docs/notifications/android/console-device");
-        } else if (id == R.id.nav_gallery) {
-            Intent intent = new Intent(this,FacilitiesActivity.class);
-            startActivity(intent);
-            webView.loadUrl("https://firebase.google.com/docs/notifications/android/console-device");
-        } else if (id == R.id.nav_slideshow) {
-            webView.loadUrl("https://firebase.google.com/docs/notifications/android/console-device");
-        } else if (id == R.id.nav_manage) {
-            webView.loadUrl("https://firebase.google.com/docs/notifications/android/console-device");
-        }
+             try {
+                for(int i=0;i<=LeftMenuArray.length()-1;i++){
+                    JSONObject obj = LeftMenuArray.getJSONObject(i);
+                    System.out.println(obj.get("menu_description"));
+                    if(item.toString().equals(obj.get("menu_description"))) {
+                        JSONArray array = obj.getJSONArray("submenu");
+                        utils.setUserPrefs(utils.SubMenuPageUrl,"",getApplicationContext());
+                        Intent intent = new Intent(this, FacilitiesActivity.class);
+                        intent.putExtra("submenu", array.toString());
+                        startActivity(intent);
+                        break;
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
+        }
+
+
 }

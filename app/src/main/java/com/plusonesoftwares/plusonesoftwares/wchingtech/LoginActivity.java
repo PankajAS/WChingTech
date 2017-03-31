@@ -9,8 +9,10 @@ import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
@@ -41,6 +43,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         txtCompanyName = (TextView) findViewById(R.id.txtCompanyName);
         txtUserName = (TextView) findViewById(R.id.txtUserName);
         txtPasswords = (TextView) findViewById(R.id.txtPasswords);
@@ -68,68 +71,51 @@ public class LoginActivity extends AppCompatActivity {
         progressDialog.setMessage("Loading....");
         progressDialog.show();
 
-        try {
-            RequestQueue requestQueue = Volley.newRequestQueue(this);
-            JSONObject jsonBody = new JSONObject();
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        HashMap<String, String> params = new HashMap<String, String>();
 
-            jsonBody.put("company_id",ComapnyName);
-            jsonBody.put("login_name",UserName);
-            jsonBody.put("login_password",Passowrd);
-            jsonBody.put("token",device_unique_id);
-            final String requestBody = jsonBody.toString();
+        params.put("company_id",ComapnyName);
+        params.put("login_name",UserName);
+        params.put("login_password",Passowrd);
+        params.put("token",device_unique_id);
 
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, loginUrl, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
+        JsonObjectRequest req = new JsonObjectRequest(loginUrl, new JSONObject(params),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
 
-                    progressDialog.dismiss();
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    intent.putExtra("response", response);
-                    intent.putExtra("ComapnyName", ComapnyName);
-                    intent.putExtra("UserName", UserName);
-                    intent.putExtra("Passowrd", Passowrd);
-                    startActivity(intent);
-                    finish();
+                        try {
+                            VolleyLog.v("Response:%n %s", response.toString(4));
 
-                    Log.i("VOLLEY", response);
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.e("VOLLEY", error.toString());
-                }
-            }) {
-                @Override
-                public String getBodyContentType() {
-                    return "application/json; charset=utf-8";
-                }
 
-                @Override
-                public byte[] getBody() throws AuthFailureError {
-                    try {
-                        return requestBody == null ? null : requestBody.getBytes("utf-8");
-                    } catch (UnsupportedEncodingException uee) {
-                        VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
-                        return null;
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            intent.putExtra("response", response.getString("login_status"));
+                            intent.putExtra("ComapnyName", ComapnyName);
+                            intent.putExtra("UserName", UserName);
+                            intent.putExtra("Passowrd", Passowrd);
+                            intent.putExtra("userdesc", response.getString("userdesc"));
+                            intent.putExtra("companydesc", response.getString("companydesc"));
+                            startActivity(intent);
+                            finish();
+                            progressDialog.dismiss();
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
                     }
-                }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.e("Error: ", error.getMessage());
+                progressDialog.dismiss();
+                Toast.makeText(getApplicationContext(),error.getMessage().toString(),Toast.LENGTH_SHORT).show();
+            }
+        });
 
-                @Override
-                protected Response<String> parseNetworkResponse(NetworkResponse response) {
-                    String responseString = "";
-                    if (response != null) {
-                        responseString = String.valueOf(response);
-                        // can get more details such as response.headers
-                    }
-                    return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
-                }
-            };
-            requestQueue.add(stringRequest);
-            requestQueue.start();
+        requestQueue.add(req);
+        requestQueue.start();
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 
 }
