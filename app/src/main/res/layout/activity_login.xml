@@ -11,74 +11,88 @@
     tools:context="com.plusonesoftwares.plusonesoftwares.wchingtech.LoginActivity"
     android:background="@drawable/loginscreen">
 
-    <TextView
-        android:text="@string/loginTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:id="@+id/loginTitle"
-        android:textColor="@android:color/white"
-        android:textSize="24sp"
-        android:layout_centerHorizontal="true" />
-
-    <LinearLayout
-        android:orientation="vertical"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/loginTitle">
+        android:layout_height="match_parent">
 
-        <EditText
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            android:ems="10"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="100dp"
-            android:id="@+id/txtCompanyName"
-            android:background="@drawable/radious"
-            android:padding="5dp"
-            android:hint="company name" />
+            android:orientation="vertical">
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            android:ems="10"
-            android:layout_marginTop="22dp"
-            android:id="@+id/txtUserName"
-            android:background="@drawable/radious"
-            android:layout_below="@+id/txtCompanyName"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:padding="5dp"
-            android:hint="user name" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/loginTitle"
+                android:orientation="vertical"
+                />
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:ems="10"
-            android:id="@+id/txtPasswords"
-            android:layout_marginTop="24dp"
-            android:background="@drawable/radious"
-            android:layout_below="@+id/txtUserName"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:padding="5dp"
-            android:hint="password" />
+                <TextView
+                    android:id="@+id/loginTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="48dp"
+                    android:gravity="center"
+                    android:text="@string/loginTitle"
+                    android:textColor="@android:color/white"
+                    android:textSize="24sp" />
 
-        <Button
-            android:text="Login"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:id="@+id/btnLogin"
-            android:layout_below="@+id/editText4"
-            android:layout_centerHorizontal="true"
-            android:textColor="@android:color/white"
-            android:background="#0f2436"
-            android:layout_gravity="center_horizontal|center_vertical"/>
-    </LinearLayout>
+                <EditText
+                    android:id="@+id/txtCompanyName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="50dp"
+                    android:background="@drawable/radious"
+                    android:ems="10"
+                    android:hint="company name"
+                    android:inputType="textPersonName"
+                    android:padding="5dp" />
+
+                <EditText
+                    android:id="@+id/txtUserName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@+id/txtCompanyName"
+                    android:layout_marginTop="22dp"
+                    android:background="@drawable/radious"
+                    android:ems="10"
+                    android:hint="user name"
+                    android:inputType="textPersonName"
+                    android:padding="5dp" />
+
+                <EditText
+                    android:id="@+id/txtPasswords"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@+id/txtUserName"
+                    android:layout_marginTop="24dp"
+                    android:background="@drawable/radious"
+                    android:ems="10"
+                    android:hint="password"
+                    android:inputType="textPassword"
+                    android:padding="5dp" />
+
+                <Button
+                    android:id="@+id/btnLogin"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/editText4"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:layout_marginTop="30dp"
+                    android:background="#0f2436"
+                    android:text="Login"
+                    android:textColor="@android:color/white" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
 
 </RelativeLayout>
