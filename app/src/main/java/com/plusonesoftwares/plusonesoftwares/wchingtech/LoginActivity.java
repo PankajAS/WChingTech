@@ -68,53 +68,57 @@ public class LoginActivity extends AppCompatActivity {
         String device_unique_id = Settings.Secure.getString(this.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
 
-        progressDialog.setMessage("Loading....");
-        progressDialog.show();
+        if(ComapnyName!=null && UserName!=null && Passowrd!=null && !ComapnyName.isEmpty() && !UserName.isEmpty() && !Passowrd.isEmpty() ) {
 
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        HashMap<String, String> params = new HashMap<String, String>();
+            progressDialog.setMessage("Loading....");
+            progressDialog.show();
 
-        params.put("company_id",ComapnyName);
-        params.put("login_name",UserName);
-        params.put("login_password",Passowrd);
-        params.put("token",device_unique_id);
+            RequestQueue requestQueue = Volley.newRequestQueue(this);
+            HashMap<String, String> params = new HashMap<String, String>();
 
-        JsonObjectRequest req = new JsonObjectRequest(loginUrl, new JSONObject(params),
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
+            params.put("company_id", ComapnyName);
+            params.put("login_name", UserName);
+            params.put("login_password", Passowrd);
+            params.put("token", device_unique_id);
 
-                        try {
-                            VolleyLog.v("Response:%n %s", response.toString(4));
+            JsonObjectRequest req = new JsonObjectRequest(loginUrl, new JSONObject(params),
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+
+                            try {
+                                VolleyLog.v("Response:%n %s", response.toString(4));
 
 
-                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                            intent.putExtra("response", response.getString("login_status"));
-                            intent.putExtra("ComapnyName", ComapnyName);
-                            intent.putExtra("UserName", UserName);
-                            intent.putExtra("Passowrd", Passowrd);
-                            intent.putExtra("userdesc", response.getString("userdesc"));
-                            intent.putExtra("companydesc", response.getString("companydesc"));
-                            startActivity(intent);
-                            finish();
-                            progressDialog.dismiss();
+                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                intent.putExtra("response", response.getString("login_status"));
+                                intent.putExtra("ComapnyName", ComapnyName);
+                                intent.putExtra("UserName", UserName);
+                                intent.putExtra("Passowrd", Passowrd);
+                                intent.putExtra("userdesc", response.getString("userdesc"));
+                                intent.putExtra("companydesc", response.getString("companydesc"));
+                                startActivity(intent);
+                                finish();
+                                progressDialog.dismiss();
 
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
                         }
-
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.e("Error: ", error.getMessage());
-                progressDialog.dismiss();
-                Toast.makeText(getApplicationContext(),error.getMessage().toString(),Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        requestQueue.add(req);
-        requestQueue.start();
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    VolleyLog.e("Error: ", error.getMessage());
+                    progressDialog.dismiss();
+                    Toast.makeText(getApplicationContext(), error.getMessage().toString(), Toast.LENGTH_SHORT).show();
+                }
+            });
+            requestQueue.add(req);
+            requestQueue.start();
+        }else{
+            Toast.makeText(getApplicationContext(),"fill the information",Toast.LENGTH_SHORT).show();
+        }
 
     }
 

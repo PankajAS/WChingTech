@@ -45,7 +45,7 @@ public class FacilitiesActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1,subMenuDsclist);
+        ArrayAdapter adapter = new ArrayAdapter(this, R.layout.single_item_layout,R.id.txtItem, subMenuDsclist);
         list.setAdapter(adapter);
 
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
