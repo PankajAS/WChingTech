@@ -83,6 +83,7 @@ public class LoginActivity extends AppCompatActivity {
             params.put("login_name", UserName);
             params.put("login_password", Passowrd);
             params.put("token", device_unique_id);
+            params.put("phone_type", "android");
 
             JsonObjectRequest req = new JsonObjectRequest(loginUrl, new JSONObject(params),
                     new Response.Listener<JSONObject>() {
