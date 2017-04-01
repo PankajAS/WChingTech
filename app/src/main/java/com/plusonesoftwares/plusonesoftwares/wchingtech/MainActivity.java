@@ -86,9 +86,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
+        //set adapter
         left_Menu_adapter = new LeftMenuListAdapter(getApplicationContext(),android.R.layout.simple_list_item_1,left_Menu_Items,left_menu_icons);
-        right_Menu_adapter = new ArrayAdapter(getApplicationContext(),android.R.layout.simple_list_item_1,right_Menu_Items);
+        right_Menu_adapter = new ArrayAdapter(getApplicationContext(),R.layout.single_item_layout_right_menu,R.id.txtItem,right_Menu_Items);
         left_drawer_list.setAdapter(left_Menu_adapter);
+        right_drawer_list.setAdapter(right_Menu_adapter);
 
         //set header
         LayoutInflater inflater = getLayoutInflater();
@@ -98,8 +100,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         left_drawer_list.addHeaderView(header, null, false);
 
         //set footer
-        ViewGroup footer = (ViewGroup)inflater.inflate(R.layout.logout_event_layout, left_drawer_list, false);
-        left_drawer_list.addFooterView(footer);
+        ViewGroup footer = (ViewGroup)inflater.inflate(R.layout.logout_event_layout, right_drawer_list, false);
+        right_drawer_list.addFooterView(footer);
         LinearLayout linearLayout = (LinearLayout)footer.findViewById(R.id.linearlayout);
         linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 finish();
             }
         });
-        right_drawer_list.setAdapter(right_Menu_adapter);
+
         getLeftMenu("en");
         getRightMenu();
 

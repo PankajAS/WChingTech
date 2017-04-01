@@ -164,7 +164,6 @@ public class LoginActivity extends AppCompatActivity {
                 params.put("token", token);
                 params.put("type", "dev");
                 params.put("message", "Welcome");
-
                 return params;
             }
         };
