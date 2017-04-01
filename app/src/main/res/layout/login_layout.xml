@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity = "center_horizontal"
+        android:layout_marginBottom="40dp"
+        android:layout_marginTop="5dp">
+
+        <ImageView
+            android:layout_width="31dp"
+            android:layout_height="30dp"
+            app:srcCompat="@drawable/app_icon"
+            android:id="@+id/imageView2"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="WchingTech"
+            android:textSize="15dp"
+            android:layout_alignLeft="@+id/imageView2"
+            android:layout_marginLeft="35dp"
+            android:layout_marginTop="8dp" />
+    </RelativeLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:paddingTop="10dp">
+
+        <View
+            android:layout_width="50dp"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp" />
+
+        <View
+            android:layout_width="50dp"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="10dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="惠程科技有限公司 WchingTech"
+            android:textSize="15dp"
+            android:layout_below="@+id/imageView2"
+            android:textColor="@android:color/darker_gray"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_gravity="center"
+            android:background="@android:color/white"
+            />
+
+
+    </FrameLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_weight="0.37"
+        android:padding="10dp">
+
+
+        <TextView
+            android:text="User Name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txtCompanyName"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="19dp"
+            android:id="@+id/textView2"
+            android:textColor="@android:color/black" />
+
+        <TextView
+            android:text="Password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:id="@+id/textView3"
+            android:layout_below="@+id/txtUserName"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:textColor="@android:color/black" />
+
+        <TextView
+            android:text="Comapny Name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView"
+            android:textColor="@android:color/black"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <Button
+            android:text="Login"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnLogin"
+            android:backgroundTint="#00ccff"
+            android:background="@drawable/radious"
+            android:textColor="@android:color/white"
+            android:layout_width="320dp"
+            android:layout_marginTop="40dp"
+            android:layout_below="@+id/txtPasswords"
+            android:layout_centerHorizontal="true" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:id="@+id/txtCompanyName"
+            android:textCursorDrawable="@null"
+            android:background="@drawable/rounded_border_edittext"
+            android:allowUndo="false"
+            android:freezesText="false"
+            android:layout_marginTop="14dp"
+            android:layout_below="@+id/textView"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:textCursorDrawable="@null"
+            android:background="@drawable/rounded_border_edittext"
+            android:id="@+id/txtUserName"
+            android:layout_marginTop="14dp"
+            android:layout_below="@+id/textView2"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:ems="10"
+            android:textCursorDrawable="@null"
+            android:background="@drawable/rounded_border_edittext"
+            android:id="@+id/txtPasswords"
+            android:layout_marginTop="14dp"
+            android:textColor="@android:color/black"
+            android:textColorLink="@android:color/black"
+            android:layout_below="@+id/textView3"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+    </RelativeLayout>
+
+</LinearLayout>
