@@ -1,8 +1,15 @@
 package com.plusonesoftwares.plusonesoftwares.wchingtech;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -10,6 +17,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,12 +34,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.squareup.picasso.Picasso;
 
@@ -42,6 +52,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     WebView webView;
@@ -56,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ArrayAdapter right_Menu_adapter;
     LeftMenuListAdapter left_Menu_adapter;
     DrawerLayout drawer;
+    String pushUrl = "http://x.hkgws.com/x/servlet/PushNotifications";
     List<String> listicons;
     Toolbar toolbar;
 
@@ -131,8 +143,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 finish();
             }
         });
+        getLeftMenu("en");
 
-        getRightMenu();
     }
 
     @Override
@@ -153,10 +165,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         JsonObjectRequest req = new JsonObjectRequest(rightMenu_Url, new JSONObject(params1),
                 new Response.Listener<JSONObject>() {
+                    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            getLeftMenu("en");//
+
                             VolleyLog.v("Response:%n %s", response.toString(4));
 
                             RightMenuArray = response.getJSONArray("language");
@@ -168,6 +181,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                             }
                             right_Menu_adapter.notifyDataSetChanged();
+                            pushNotification();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -231,7 +245,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 left_menu_icons.add(new FindFontAwesomeIcons().getString(obj.get("menu_icon").toString()));
                             }
                             left_Menu_adapter.notifyDataSetChanged();
-
+                            getRightMenu();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -287,6 +301,58 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    public void pushNotification() {
+
+        final String device_unique_id = Settings.Secure.getString(this.getContentResolver(),
+                Settings.Secure.ANDROID_ID);
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        HashMap<String, String> params = new HashMap<String, String>();
+
+        StringRequest req = new StringRequest(Request.Method.POST, pushUrl, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                NotificationManager notif = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                Notification notify = new Notification.Builder
+                        (getApplicationContext())
+                        .setContentTitle(response)
+                        .setContentText(response)
+                        .setSmallIcon(R.drawable.gear)
+                        .build();
+
+                PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0,
+                        new Intent(getApplicationContext(), LoginActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+
+                notify.contentIntent = contentIntent;
+
+                notify.flags |= Notification.FLAG_AUTO_CANCEL;
+                notif.notify(0, notify);
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("token", device_unique_id);
+                params.put("type", "dev");
+                params.put("message", "Welcome");
+                return params;
+            }
+
+        };
+        queue.add(req);
+        queue.start();
+
+    }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -296,6 +362,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             super.onBackPressed();
         }
     }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+                moveTaskToBack(true);
+                return true;
+        }
+        return false;
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

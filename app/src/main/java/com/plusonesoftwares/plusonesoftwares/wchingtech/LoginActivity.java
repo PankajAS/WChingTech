@@ -44,7 +44,6 @@ public class LoginActivity extends AppCompatActivity {
     ProgressDialog progressDialog;
     JSONObject jsonObject;
     String loginUrl = "http://x.hkgws.com/x/servlet/JSONLoginServlet";
-    String pushUrl = "http://x.hkgws.com/x/servlet/PushNotifications";
     LinearLayout linearLayout;
      String ComapnyName ;
      String UserName ;
@@ -116,7 +115,6 @@ public class LoginActivity extends AppCompatActivity {
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                 manageSession(response);
                                 startActivity(intent);
-
                                 finish();
                                 progressDialog.dismiss();
                                 txtCompanyName.setText("");
@@ -153,52 +151,5 @@ public class LoginActivity extends AppCompatActivity {
         utils.setUserPrefs(utils.companydesc, response.getString("companydesc") ,getApplicationContext());
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    public void pushNotification(final String token) {
 
-        RequestQueue queue = Volley.newRequestQueue(this);
-        HashMap<String, String> params = new HashMap<String, String>();
-
-        StringRequest req = new StringRequest(Request.Method.POST, pushUrl, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                NotificationManager notif = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                Notification notify = new Notification.Builder
-                        (getApplicationContext())
-                        .setContentTitle(response)
-                        .setContentText(response)
-                        .setSmallIcon(R.drawable.gear)
-                        .build();
-
-                PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0,
-                        new Intent(getApplicationContext(), LoginActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
-
-                notify.contentIntent = contentIntent;
-
-                notify.flags |= Notification.FLAG_AUTO_CANCEL;
-                notif.notify(0, notify);
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        }) {
-
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("token", token);
-                params.put("type", "dev");
-                params.put("message", "Welcome");
-                return params;
-            }
-
-        };
-        queue.add(req);
-        queue.start();
-
-    }
 }
