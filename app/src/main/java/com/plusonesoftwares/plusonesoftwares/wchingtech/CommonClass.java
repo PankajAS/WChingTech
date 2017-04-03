@@ -21,6 +21,13 @@ public class CommonClass {
     public static final String SelectedLanguage = "SelectedLanguage";
     public static final String SelectedItem = "SelectedItem";
 
+    public static final String response = "response";
+    public static final String ComapnyName = "ComapnyName";
+    public static final String UserName = "UserName";
+    public static final String Passowrd = "Passowrd";
+    public static final String userdesc = "userdesc";
+    public static final String companydesc = "companydesc";
+
 
     SharedPreferences sharedpreferences;
     

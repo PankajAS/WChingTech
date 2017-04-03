@@ -44,7 +44,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     WebView webView;
-    String CompanyName, UserName, Passowrd, response, userdesc;
+    String CompanyName, UserName, Passowrd, response, userdesc, companydesc;
     final String leftMenu_Url = "http://x.hkgws.com/x/servlet/GetIOSMenu";
     final String rightMenu_Url = "http://x.hkgws.com/x/servlet/GetSysLanguage/";
     ListView left_drawer_list, right_drawer_list;
@@ -74,11 +74,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         left_menu_icons = new ArrayList<>();
         utils.setUserPrefs(utils.SubMenuPageUrl, "", getApplicationContext());
         utils.setUserPrefs(utils.SelectedItem, "", getApplicationContext());
-        CompanyName = intent.getStringExtra("ComapnyName");
-        UserName = intent.getStringExtra("UserName");
-        Passowrd = intent.getStringExtra("Passowrd");
-        response = intent.getStringExtra("response");
-        userdesc = intent.getStringExtra("userdesc");
+
+        response = utils.getUserPrefs(utils.response, getApplicationContext());
+        CompanyName =utils.getUserPrefs(utils.ComapnyName ,getApplicationContext());
+        UserName = utils.getUserPrefs(utils.UserName ,getApplicationContext());
+        Passowrd = utils.getUserPrefs(utils.Passowrd ,getApplicationContext());
+        userdesc = utils.getUserPrefs(utils.userdesc, getApplicationContext());
+        companydesc = utils.getUserPrefs(utils.companydesc, getApplicationContext());
+
         webView = (WebView) findViewById(R.id.webView);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setLoadWithOverviewMode(true);
@@ -113,6 +116,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //clear session on logout click
+                utils.setUserPrefs(utils.response, "" ,getApplicationContext());
+                utils.setUserPrefs(utils.ComapnyName, "" ,getApplicationContext());
+                utils.setUserPrefs(utils.UserName, "" ,getApplicationContext());
+                utils.setUserPrefs(utils.Passowrd, "" ,getApplicationContext());
+                utils.setUserPrefs(utils.userdesc, "" ,getApplicationContext());
+                utils.setUserPrefs(utils.companydesc,"" ,getApplicationContext());
+
                 finish();
             }
         });

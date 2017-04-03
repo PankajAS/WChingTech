@@ -46,36 +46,48 @@ public class LoginActivity extends AppCompatActivity {
     String loginUrl = "http://x.hkgws.com/x/servlet/JSONLoginServlet";
     String pushUrl = "http://x.hkgws.com/x/servlet/PushNotifications";
     LinearLayout linearLayout;
+     String ComapnyName ;
+     String UserName ;
+     String Passowrd ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_layout);
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE|WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        linearLayout = (LinearLayout)findViewById(R.id.linearLayout);
         utils = new CommonClass();
-        txtCompanyName = (EditText) findViewById(R.id.txtCompanyName);
-        txtUserName = (EditText) findViewById(R.id.txtUserName);
-        txtPasswords = (EditText) findViewById(R.id.txtPasswords);
-        utils.setFontForContainer(getApplicationContext(),linearLayout);
-        btnLogin = (Button) findViewById(R.id.btnLogin);
-        progressDialog = new ProgressDialog(this);
-        jsonObject = new JSONObject();
+        //check session before loading of login screen if session exist
+        if (utils.getUserPrefs(utils.UserName, getApplicationContext()) != null && !utils.getUserPrefs(utils.UserName, getApplicationContext()).isEmpty()) {
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+        }
+        else {
 
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                login();
-            }
-        });
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
+
+            txtCompanyName = (EditText) findViewById(R.id.txtCompanyName);
+            txtUserName = (EditText) findViewById(R.id.txtUserName);
+            txtPasswords = (EditText) findViewById(R.id.txtPasswords);
+            utils.setFontForContainer(getApplicationContext(), linearLayout);
+            btnLogin = (Button) findViewById(R.id.btnLogin);
+            progressDialog = new ProgressDialog(this);
+            jsonObject = new JSONObject();
+
+            btnLogin.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    login();
+                }
+            });
+        }
     }
 
     private void login() {
 
-        final String ComapnyName = txtCompanyName.getText().toString();
-        final String UserName = txtUserName.getText().toString();
-        final String Passowrd = txtPasswords.getText().toString();
+         ComapnyName = txtCompanyName.getText().toString();
+         UserName = txtUserName.getText().toString();
+         Passowrd = txtPasswords.getText().toString();
         final String device_unique_id = Settings.Secure.getString(this.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
 
@@ -102,13 +114,9 @@ public class LoginActivity extends AppCompatActivity {
                             try {
                                 VolleyLog.v("Response:%n %s", response.toString(4));
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                intent.putExtra("response", response.getString("login_status"));
-                                intent.putExtra("ComapnyName", ComapnyName);
-                                intent.putExtra("UserName", UserName);
-                                intent.putExtra("Passowrd", Passowrd);
-                                intent.putExtra("userdesc", response.getString("userdesc"));
-                                intent.putExtra("companydesc", response.getString("companydesc"));
+                                manageSession(response);
                                 startActivity(intent);
+
                                 //finish();
                                 progressDialog.dismiss();
                                 txtCompanyName.setText("");
@@ -134,6 +142,15 @@ public class LoginActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Please fill the required information", Toast.LENGTH_SHORT).show();
         }
 
+    }
+
+    private void manageSession(JSONObject response) throws JSONException {
+        utils.setUserPrefs(utils.response, response.getString("login_status") ,getApplicationContext());
+        utils.setUserPrefs(utils.ComapnyName, ComapnyName ,getApplicationContext());
+        utils.setUserPrefs(utils.UserName, UserName ,getApplicationContext());
+        utils.setUserPrefs(utils.Passowrd, Passowrd ,getApplicationContext());
+        utils.setUserPrefs(utils.userdesc, response.getString("userdesc") ,getApplicationContext());
+        utils.setUserPrefs(utils.companydesc, response.getString("companydesc") ,getApplicationContext());
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
