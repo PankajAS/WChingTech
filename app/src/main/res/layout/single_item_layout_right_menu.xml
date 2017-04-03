@@ -7,7 +7,7 @@
         android:text="TextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/txtItem"
+        android:id="@+id/language"
         android:textSize="18sp"
         android:textColor="@android:color/black"
         android:padding="15dp"

@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //set adapter
         left_Menu_adapter = new LeftMenuListAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, left_Menu_Items, left_menu_icons);
-        right_Menu_adapter = new ArrayAdapter(getApplicationContext(), R.layout.single_item_layout_right_menu, R.id.txtItem, right_Menu_Items);
+        right_Menu_adapter = new RightMenuListAdapter(getApplicationContext(), R.layout.single_item_layout_right_menu, right_Menu_Items);
         left_drawer_list.setAdapter(left_Menu_adapter);
         right_drawer_list.setAdapter(right_Menu_adapter);
 
