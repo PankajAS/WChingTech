@@ -117,12 +117,12 @@ public class LoginActivity extends AppCompatActivity {
                                 manageSession(response);
                                 startActivity(intent);
 
-                                //finish();
+                                finish();
                                 progressDialog.dismiss();
                                 txtCompanyName.setText("");
                                 txtPasswords.setText("");
                                 txtUserName.setText("");
-                                pushNotification(device_unique_id);
+                              //  pushNotification(device_unique_id);
 
                             } catch (JSONException e) {
                                 e.printStackTrace();

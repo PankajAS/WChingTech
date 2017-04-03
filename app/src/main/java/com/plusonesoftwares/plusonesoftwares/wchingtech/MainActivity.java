@@ -123,7 +123,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 utils.setUserPrefs(utils.Passowrd, "" ,getApplicationContext());
                 utils.setUserPrefs(utils.userdesc, "" ,getApplicationContext());
                 utils.setUserPrefs(utils.companydesc,"" ,getApplicationContext());
-
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
                 finish();
             }
         });
