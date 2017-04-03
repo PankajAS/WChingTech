@@ -24,12 +24,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.plusonesoftwares.plusonesoftwares.wchingtech.FontManager.FontManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,44 +44,47 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     WebView webView;
-    String CompanyName, UserName, Passowrd,response,userdesc;
+    String CompanyName, UserName, Passowrd, response, userdesc;
     final String leftMenu_Url = "http://x.hkgws.com/x/servlet/GetIOSMenu";
     final String rightMenu_Url = "http://x.hkgws.com/x/servlet/GetSysLanguage/";
-    ListView left_drawer_list,right_drawer_list;
+    ListView left_drawer_list, right_drawer_list;
     JSONArray RightMenuArray;
     JSONArray LeftMenuArray;
     CommonClass utils;
-    List<String> left_Menu_Items,right_Menu_Items,left_menu_icons;
+    List<String> left_Menu_Items, right_Menu_Items, left_menu_icons;
     ArrayAdapter right_Menu_adapter;
     LeftMenuListAdapter left_Menu_adapter;
     DrawerLayout drawer;
+    List<String> listicons;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(getString(R.string.activityTitle));
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("Home");
         setSupportActionBar(toolbar);
         Intent intent = getIntent();
         utils = new CommonClass();
-        left_drawer_list = (ListView)findViewById(R.id.left_drawer_list);
-        right_drawer_list = (ListView)findViewById(R.id.right_drawer_list);
+        left_drawer_list = (ListView) findViewById(R.id.left_drawer_list);
+        right_drawer_list = (ListView) findViewById(R.id.right_drawer_list);
         left_Menu_Items = new ArrayList<>();
         right_Menu_Items = new ArrayList<>();
         left_menu_icons = new ArrayList<>();
-        utils.setUserPrefs(utils.SubMenuPageUrl,"",getApplicationContext());
+        utils.setUserPrefs(utils.SubMenuPageUrl, "", getApplicationContext());
+        utils.setUserPrefs(utils.SelectedItem, "", getApplicationContext());
         CompanyName = intent.getStringExtra("ComapnyName");
         UserName = intent.getStringExtra("UserName");
         Passowrd = intent.getStringExtra("Passowrd");
         response = intent.getStringExtra("response");
         userdesc = intent.getStringExtra("userdesc");
-        webView = (WebView)findViewById(R.id.webView);
+        webView = (WebView) findViewById(R.id.webView);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setLoadWithOverviewMode(true);
         webView.getSettings().setUseWideViewPort(true);
         webView.setWebViewClient(new MyBrowser());
-        webView.loadUrl("http://x.hkgws.com/x/servlet/Login_process?login_name="+UserName+"&login_password="+Passowrd+"&company_id="+CompanyName+"&storecompany="+response+"&isMobile=Y");
+        webView.loadUrl("http://x.hkgws.com/x/servlet/Login_process?login_name=" + UserName + "&login_password=" + Passowrd + "&company_id=" + CompanyName + "&storecompany=" + response + "&isMobile=Y");
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -87,22 +93,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toggle.syncState();
 
         //set adapter
-        left_Menu_adapter = new LeftMenuListAdapter(getApplicationContext(),android.R.layout.simple_list_item_1,left_Menu_Items,left_menu_icons);
-        right_Menu_adapter = new ArrayAdapter(getApplicationContext(),R.layout.single_item_layout_right_menu,R.id.txtItem,right_Menu_Items);
+        left_Menu_adapter = new LeftMenuListAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, left_Menu_Items, left_menu_icons);
+        right_Menu_adapter = new ArrayAdapter(getApplicationContext(), R.layout.single_item_layout_right_menu, R.id.txtItem, right_Menu_Items);
         left_drawer_list.setAdapter(left_Menu_adapter);
         right_drawer_list.setAdapter(right_Menu_adapter);
 
         //set header
         LayoutInflater inflater = getLayoutInflater();
-        ViewGroup header = (ViewGroup)inflater.inflate(R.layout.nav_header_main, left_drawer_list, false);
-        TextView txtuserdesc = (TextView)header.findViewById(R.id.txtusername);
+        ViewGroup header = (ViewGroup) inflater.inflate(R.layout.nav_header_main, left_drawer_list, false);
+        TextView txtuserdesc = (TextView) header.findViewById(R.id.txtusername);
         txtuserdesc.setText(userdesc);
         left_drawer_list.addHeaderView(header, null, false);
 
         //set footer
-        ViewGroup footer = (ViewGroup)inflater.inflate(R.layout.logout_event_layout, right_drawer_list, false);
+        ViewGroup footer = (ViewGroup) inflater.inflate(R.layout.logout_event_layout, right_drawer_list, false);
         right_drawer_list.addFooterView(footer);
-        LinearLayout linearLayout = (LinearLayout)footer.findViewById(R.id.linearlayout);
+        LinearLayout linearLayout = (LinearLayout) footer.findViewById(R.id.linearlayout);
+
         linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -110,16 +117,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        getLeftMenu("en");
         getRightMenu();
-
+        getLeftMenu("en");
     }
 
     @Override
     protected void onResume() {
 
-        if(utils.getUserPrefs(utils.SubMenuPageUrl, getApplicationContext())!=null && !utils.getUserPrefs(utils.SubMenuPageUrl, getApplicationContext()).isEmpty()){
+        if (utils.getUserPrefs(utils.SubMenuPageUrl, getApplicationContext()) != null && !utils.getUserPrefs(utils.SubMenuPageUrl, getApplicationContext()).isEmpty()) {
             webView.loadUrl(utils.getUserPrefs(utils.SubMenuPageUrl, getApplicationContext()));
+            toolbar.setTitle(utils.getUserPrefs(utils.SelectedItem, getApplicationContext()));
         }
 
         super.onResume();
@@ -139,12 +146,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                             RightMenuArray = response.getJSONArray("language");
 
-                            for(int i=0;i<=RightMenuArray.length()-1;i++){
+                            for (int i = 0; i <= RightMenuArray.length() - 1; i++) {
                                 JSONObject obj = RightMenuArray.getJSONObject(i);
-                                System.out.println("menu "+obj.get("description"));
+                                System.out.println("menu " + obj.get("description"));
                                 right_Menu_Items.add(obj.get("description").toString());
 
                             }
+
                             right_Menu_adapter.notifyDataSetChanged();
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -154,9 +162,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.e("Error: ", error.getMessage());
-                Toast.makeText(getApplicationContext(),error.getMessage(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        });
+        }) {
+            @Override
+            public RetryPolicy getRetryPolicy() {
+
+                return new DefaultRetryPolicy(
+                        10000,
+                        DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                        DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+            }
+        };
+
         requestQueue.add(req);
         requestQueue.start();
 
@@ -173,7 +191,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 drawer.closeDrawer(Gravity.END);
             }
         });
-
     }
 
     @NonNull
@@ -190,14 +207,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
+
                             VolleyLog.v("Response:%n %s", response.toString(4));
                             left_Menu_Items.clear();
                             LeftMenuArray = response.getJSONArray("menu_base");
-                            for(int i=0;i<=LeftMenuArray.length()-1;i++){
+                            for (int i = 0; i <= LeftMenuArray.length() - 1; i++) {
                                 JSONObject obj = LeftMenuArray.getJSONObject(i);
-                                System.out.println(obj.get("menu_description"));
                                 left_Menu_Items.add(obj.get("menu_description").toString());
-                                left_menu_icons.add("http://icons.iconarchive.com/icons/icons8/ios7/256/User-Interface-Menu-icon.png");
+                                left_menu_icons.add(new FindFontAwesomeIcons().getString(obj.get("menu_icon").toString()));
                             }
                             left_Menu_adapter.notifyDataSetChanged();
 
@@ -209,9 +226,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.e("Error: ", error.getMessage());
-                Toast.makeText(getApplicationContext(),error.getMessage(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        });
+        }) {
+            @Override
+            public RetryPolicy getRetryPolicy() {
+
+                return new DefaultRetryPolicy(
+                        10000,
+                        DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                        DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+            }
+        };
         queue.add(req);
         queue.start();
 
@@ -219,15 +245,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 try {
-                        JSONObject obj = LeftMenuArray.getJSONObject(i-1);
-                        System.out.println(obj.get("menu_description"));
-                        if(left_Menu_Items.get(i-1).toString().equals(obj.get("menu_description"))) {
-                            JSONArray array = obj.getJSONArray("submenu");
-                            utils.setUserPrefs(utils.SubMenuPageUrl,"",getApplicationContext());
-                            Intent intent = new Intent(getApplicationContext(), FacilitiesActivity.class);
-                            intent.putExtra("submenu", array.toString());
-                            startActivity(intent);
-                        }
+                    JSONObject obj = LeftMenuArray.getJSONObject(i - 1);
+                    System.out.println(obj.get("menu_description"));
+                    if (left_Menu_Items.get(i - 1).toString().equals(obj.get("menu_description"))) {
+                        JSONArray array = obj.getJSONArray("submenu");
+                        utils.setUserPrefs(utils.SubMenuPageUrl, "", getApplicationContext());
+                        Intent intent = new Intent(getApplicationContext(), FacilitiesActivity.class);
+                        intent.putExtra("submenu", array.toString());
+                        startActivity(intent);
+                    }
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -288,27 +314,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
 
-             try {
-                for(int i=0;i<=LeftMenuArray.length()-1;i++){
-                    JSONObject obj = LeftMenuArray.getJSONObject(i);
-                    System.out.println(obj.get("menu_description"));
-                    if(item.toString().equals(obj.get("menu_description"))) {
-                        JSONArray array = obj.getJSONArray("submenu");
-                        utils.setUserPrefs(utils.SubMenuPageUrl,"",getApplicationContext());
-                        Intent intent = new Intent(this, FacilitiesActivity.class);
-                        intent.putExtra("submenu", array.toString());
-                        startActivity(intent);
-                        break;
-                    }
+        try {
+            for (int i = 0; i <= LeftMenuArray.length() - 1; i++) {
+                JSONObject obj = LeftMenuArray.getJSONObject(i);
+                System.out.println(obj.get("menu_description"));
+                if (item.toString().equals(obj.get("menu_description"))) {
+                    JSONArray array = obj.getJSONArray("submenu");
+                    utils.setUserPrefs(utils.SubMenuPageUrl, "", getApplicationContext());
+                    Intent intent = new Intent(this, FacilitiesActivity.class);
+                    intent.putExtra("submenu", array.toString());
+                    startActivity(intent);
+                    break;
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-        }
+    }
 
 
 }

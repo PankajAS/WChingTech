@@ -1,21 +1,15 @@
 package com.plusonesoftwares.plusonesoftwares.wchingtech;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.plusonesoftwares.plusonesoftwares.wchingtech.FontManager.FontManager;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by ashoksharma on 02/03/17.
@@ -25,6 +19,8 @@ public class CommonClass {
     public static final String MyPREFERENCES = "MyPrefs";
     public static final String SubMenuPageUrl = "SubMenuPageUrl";
     public static final String SelectedLanguage = "SelectedLanguage";
+    public static final String SelectedItem = "SelectedItem";
+
 
     SharedPreferences sharedpreferences;
     
@@ -60,6 +56,16 @@ public class CommonClass {
         SharedPreferences.Editor editor = sharedpreferences.edit();
         editor.clear();
         editor.commit();
+    }
+
+    public void setFontForContainer(Context context, ViewGroup contentLayout) {
+        for (int i=0; i < contentLayout.getChildCount(); i++) {
+            View view = contentLayout.getChildAt(i);
+            if (view instanceof TextView)
+                ((TextView)view).setTypeface(FontManager.getTypeface(context, FontManager.FONTAWESOME));
+            else if (view instanceof ViewGroup)
+               setFontForContainer(context, (ViewGroup) view);
+        }
     }
 
  }

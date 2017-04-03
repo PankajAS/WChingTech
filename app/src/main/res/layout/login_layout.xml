@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:background="@android:color/white"
+    android:id="@+id/linearLayout">
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -35,24 +36,19 @@
         android:paddingTop="10dp">
 
         <View
-            android:layout_width="50dp"
             android:layout_height="1dp"
             android:background="@android:color/darker_gray"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="10dp" />
-
-        <View
-            android:layout_width="50dp"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"
-            android:layout_gravity="right|center_vertical"
-            android:layout_marginRight="10dp" />
+            android:layout_alignRight="@+id/title"
+            android:layout_marginLeft="10dp"
+            android:layout_width="100dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="惠程科技有限公司 WchingTech"
+            android:text="惠程科技有限公司"
             android:textSize="15dp"
+            android:id="@+id/title"
             android:layout_below="@+id/imageView2"
             android:textColor="@android:color/darker_gray"
             android:paddingLeft="10dp"
@@ -60,6 +56,16 @@
             android:layout_gravity="center"
             android:background="@android:color/white"
             />
+
+        <View
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"
+            android:layout_gravity="right|center_vertical"
+            android:layout_alignLeft="@+id/title"
+            android:layout_marginRight="10dp"
+            android:layout_width="100dp" />
+
+
 
 
     </FrameLayout>
@@ -98,7 +104,7 @@
             android:text="Comapny Name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/textView"
+            android:id="@+id/companytxt"
             android:textColor="@android:color/black"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
@@ -126,7 +132,7 @@
             android:allowUndo="false"
             android:freezesText="false"
             android:layout_marginTop="14dp"
-            android:layout_below="@+id/textView"
+            android:layout_below="@+id/companytxt"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
 

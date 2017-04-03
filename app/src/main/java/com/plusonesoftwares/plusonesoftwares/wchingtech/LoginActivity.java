@@ -16,6 +16,8 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Checkable;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +29,7 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.plusonesoftwares.plusonesoftwares.wchingtech.FontManager.FontManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,12 +38,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
-    TextView txtCompanyName, txtUserName, txtPasswords;
+    EditText txtCompanyName, txtUserName, txtPasswords;
     Button btnLogin;
+    CommonClass utils;
     ProgressDialog progressDialog;
     JSONObject jsonObject;
     String loginUrl = "http://x.hkgws.com/x/servlet/JSONLoginServlet";
     String pushUrl = "http://x.hkgws.com/x/servlet/PushNotifications";
+    LinearLayout linearLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +53,12 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.login_layout);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE|WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        txtCompanyName = (TextView) findViewById(R.id.txtCompanyName);
-        txtUserName = (TextView) findViewById(R.id.txtUserName);
-        txtPasswords = (TextView) findViewById(R.id.txtPasswords);
+        linearLayout = (LinearLayout)findViewById(R.id.linearLayout);
+        utils = new CommonClass();
+        txtCompanyName = (EditText) findViewById(R.id.txtCompanyName);
+        txtUserName = (EditText) findViewById(R.id.txtUserName);
+        txtPasswords = (EditText) findViewById(R.id.txtPasswords);
+        utils.setFontForContainer(getApplicationContext(),linearLayout);
         btnLogin = (Button) findViewById(R.id.btnLogin);
         progressDialog = new ProgressDialog(this);
         jsonObject = new JSONObject();
@@ -161,6 +169,7 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         }) {
+
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
@@ -169,6 +178,7 @@ public class LoginActivity extends AppCompatActivity {
                 params.put("message", "Welcome");
                 return params;
             }
+
         };
         queue.add(req);
         queue.start();
