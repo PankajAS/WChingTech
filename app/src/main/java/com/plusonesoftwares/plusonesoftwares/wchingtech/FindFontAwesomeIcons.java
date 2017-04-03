@@ -86,6 +86,7 @@ public class FindFontAwesomeIcons{
         mIcons.put("fa_diamond","&#xf219;");
         mIcons.put("fa_building_o","&#xf0f7;");
         mIcons.put("fa_bullhorn","&#xf0a1;");
+        mIcons.put("fa_object_group","&#xf247;");
         mIcons.put("fa_bullseye","&#xf140;");
         mIcons.put("fa_bus","&#xf207;");
         mIcons.put("fa_cab","&#xf1ba;");
