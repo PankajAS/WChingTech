@@ -30,6 +30,7 @@ public class LeftMenuListAdapter extends ArrayAdapter {
     Context context;
     CommonClass utils;
     FontManager fontManager;
+    FindFontAwesomeIcons clsFontAwesomeIcons;
 
     public LeftMenuListAdapter(Context context, int resource, List<String> menuItems, List<String> menuIcon) {
         super(context, resource, menuItems);
@@ -38,6 +39,7 @@ public class LeftMenuListAdapter extends ArrayAdapter {
         this.context = context;
         utils = new CommonClass();
         fontManager = new FontManager();
+        clsFontAwesomeIcons = new FindFontAwesomeIcons();
     }
 
     @NonNull
@@ -69,24 +71,7 @@ public class LeftMenuListAdapter extends ArrayAdapter {
                 holder.category_icon.getContext(),
                 FontManager.FONTAWESOME);
         holder.category_icon.setTypeface(icon);
-
-            for(Map.Entry<String, String> entry: new FindFontAwesomeIcons().getmIcons().entrySet()){
-                if(menuIcon.get(position).equals(entry.getKey())){
-                    System.out.println(entry.getValue());
-                    holder.category_icon.setText(Html.fromHtml(entry.getValue()));
-                    break;
-                }
-            }
-
-        //  Picasso.with(context).load(menuIcon.get(position)).into(holder.category_image);
-       /* String base64Image = (String) categoryListobj.get(position).get("image");
-
-        if(base64Image != null && !base64Image.isEmpty()) {
-            byte[] imageAsBytes = Base64.decode(base64Image.getBytes(), Base64.DEFAULT);
-            Bitmap image = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
-            holder.category_image.setImageBitmap(image);
-        }*/
-
+        holder.category_icon.setText(Html.fromHtml(clsFontAwesomeIcons.getmIcons().get(menuIcon.get(position))));
         return convertView;
     }
 

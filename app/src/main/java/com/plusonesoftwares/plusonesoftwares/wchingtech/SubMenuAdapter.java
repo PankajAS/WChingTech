@@ -25,6 +25,7 @@ public class SubMenuAdapter extends ArrayAdapter {
     List<String> itemName, itemIcon;
     Context context;
     CommonClass utils;
+    FindFontAwesomeIcons clsFontAwesomeIcons;
 
     public SubMenuAdapter(Context context, int resource, List<String> itmeNames, List<String> itemIcon) {
         super(context, resource, itmeNames);
@@ -32,6 +33,7 @@ public class SubMenuAdapter extends ArrayAdapter {
         this.itemName = itmeNames;
         this.itemIcon = itemIcon;
         utils = new CommonClass();
+        clsFontAwesomeIcons = new FindFontAwesomeIcons();
     }
 
     @NonNull
@@ -66,13 +68,7 @@ public class SubMenuAdapter extends ArrayAdapter {
         holder.category_icon.setTypeface(icon);
         holder.category_icon.setTextColor(Color.WHITE);
 
-        for(Map.Entry<String, String> entry: new FindFontAwesomeIcons().getmIcons().entrySet()){
-            if(itemIcon.get(position).equals(entry.getKey())){
-                System.out.println(entry.getValue());
-                holder.category_icon.setText(Html.fromHtml(entry.getValue()));
-                break;
-            }
-        }
+        holder.category_icon.setText(Html.fromHtml(clsFontAwesomeIcons.getmIcons().get(itemIcon.get(position))));
 
         return convertView;
     }
