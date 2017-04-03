@@ -245,7 +245,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 left_menu_icons.add(new FindFontAwesomeIcons().getString(obj.get("menu_icon").toString()));
                             }
                             left_Menu_adapter.notifyDataSetChanged();
-                            getRightMenu();
+                            if(right_Menu_Items.size()<=0) {
+                                getRightMenu();
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
