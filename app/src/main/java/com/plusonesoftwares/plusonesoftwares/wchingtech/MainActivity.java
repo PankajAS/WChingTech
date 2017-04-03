@@ -129,7 +129,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
         getRightMenu();
-        getLeftMenu("en");
     }
 
     @Override
@@ -153,6 +152,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
+                            getLeftMenu("en");//
                             VolleyLog.v("Response:%n %s", response.toString(4));
 
                             RightMenuArray = response.getJSONArray("language");
@@ -163,7 +163,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 right_Menu_Items.add(obj.get("description").toString());
 
                             }
-
                             right_Menu_adapter.notifyDataSetChanged();
                         } catch (JSONException e) {
                             e.printStackTrace();
