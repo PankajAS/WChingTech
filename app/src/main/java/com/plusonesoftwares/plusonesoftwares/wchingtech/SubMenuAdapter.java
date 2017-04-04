@@ -60,13 +60,11 @@ public class SubMenuAdapter extends ArrayAdapter {
                 FontManager.FONTAWESOME);
         holder.category.setTypeface(iconCalendar);
         holder.category.setText(itemName.get(position));
-        holder.category.setTextColor(Color.WHITE);
 
         Typeface icon = FontManager.getTypeface(
                 holder.category_icon.getContext(),
                 FontManager.FONTAWESOME);
         holder.category_icon.setTypeface(icon);
-        holder.category_icon.setTextColor(Color.WHITE);
 
         holder.category_icon.setText(Html.fromHtml(clsFontAwesomeIcons.getmIcons().get(itemIcon.get(position))));
 

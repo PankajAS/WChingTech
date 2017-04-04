@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +44,7 @@ public class FacilitiesActivity extends AppCompatActivity {
 
             for(int i =0;i<=array.length()-1;i++){
                 JSONObject obj = array.getJSONObject(i);
-                subMenuDsclist.add(obj.getString("sub_menu_description"));
+                subMenuDsclist.add(util.getEncodedString(obj.getString("sub_menu_description").toString()));
                 subMenuPageUrl.add(obj.getString("sub_menu_page"));
                 subMenuIcon.add(new FindFontAwesomeIcons().getString(obj.get("sub_menu_icon").toString()));
             }
@@ -57,7 +58,7 @@ public class FacilitiesActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 util.setUserPrefs(util.SubMenuPageUrl,subMenuPageUrl.get(i),getApplicationContext());
-                util.setUserPrefs(util.SelectedItem,subMenuDsclist.get(i),getApplicationContext());
+                util.setUserPrefs(util.SelectedItem, util.getEncodedString(subMenuDsclist.get(i)), getApplicationContext());
                 finish();
             }
         });

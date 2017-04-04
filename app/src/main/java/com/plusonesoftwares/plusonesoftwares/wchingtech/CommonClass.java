@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.plusonesoftwares.plusonesoftwares.wchingtech.FontManager.FontManager;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -73,6 +74,15 @@ public class CommonClass {
             else if (view instanceof ViewGroup)
                setFontForContainer(context, (ViewGroup) view);
         }
+    }
+
+    public String getEncodedString(String param){
+        try {
+            return new String(param.getBytes("ISO-8859-1"), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return param;
     }
 
  }

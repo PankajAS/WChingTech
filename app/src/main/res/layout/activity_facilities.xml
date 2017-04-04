@@ -6,14 +6,13 @@
     android:layout_height="match_parent"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.plusonesoftwares.plusonesoftwares.wchingtech.FacilitiesActivity"
-    android:background="@drawable/leftmenu">
+    android:paddingLeft="15dp">
 
     <ListView
         android:id="@+id/list"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="end"
-        android:background="@drawable/leftmenu"
         android:choiceMode="singleChoice"
         android:fitsSystemWindows="true"
         android:divider="@android:color/darker_gray"

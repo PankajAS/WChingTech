@@ -49,6 +49,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -241,7 +244,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             LeftMenuArray = response.getJSONArray("menu_base");
                             for (int i = 0; i <= LeftMenuArray.length() - 1; i++) {
                                 JSONObject obj = LeftMenuArray.getJSONObject(i);
-                                left_Menu_Items.add(obj.get("menu_description").toString());
+
+                                left_Menu_Items.add(utils.getEncodedString(obj.get("menu_description").toString()));
                                 left_menu_icons.add(new FindFontAwesomeIcons().getString(obj.get("menu_icon").toString()));
                             }
                             left_Menu_adapter.notifyDataSetChanged();
@@ -277,7 +281,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 try {
                     JSONObject obj = LeftMenuArray.getJSONObject(i - 1);
                     System.out.println(obj.get("menu_description"));
-                    if (left_Menu_Items.get(i - 1).toString().equals(obj.get("menu_description"))) {
+                    if (left_Menu_Items.get(i - 1).toString().equals(utils.getEncodedString(obj.get("menu_description").toString()))) {
                         JSONArray array = obj.getJSONArray("submenu");
                         utils.setUserPrefs(utils.SubMenuPageUrl, "", getApplicationContext());
                         Intent intent = new Intent(getApplicationContext(), FacilitiesActivity.class);

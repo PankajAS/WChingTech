@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.plusonesoftwares.plusonesoftwares.wchingtech.FontManager.FontManager;
@@ -26,7 +27,7 @@ import java.util.Set;
  */
 
 public class LeftMenuListAdapter extends ArrayAdapter {
-    List<String> menuItems,menuIcon;
+    List<String> menuItems, menuIcon;
     Context context;
     CommonClass utils;
     FontManager fontManager;
@@ -45,19 +46,20 @@ public class LeftMenuListAdapter extends ArrayAdapter {
     @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        LeftMenuListAdapter.ViewHolder holder= null;
-        if(convertView == null) {
+        LeftMenuListAdapter.ViewHolder holder = null;
+        if (convertView == null) {
             holder = new LeftMenuListAdapter.ViewHolder();
-            LayoutInflater inflater=LayoutInflater.from(context);
-            convertView = inflater.inflate(R.layout.left_menu_list_items, null ,true);
-            utils.setFontForContainer(context,parent);
-
-                holder.category = (TextView) convertView.findViewById(R.id.Title);
-                holder.category_icon = (TextView) convertView.findViewById(R.id.category_icon);
+            LayoutInflater inflater = LayoutInflater.from(context);
+            convertView = inflater.inflate(R.layout.left_menu_list_items, null, true);
+            utils.setFontForContainer(context, parent);
+            RelativeLayout relativeLayout = (RelativeLayout) convertView.findViewById(R.id.relativelayout);
+            relativeLayout.setPadding(15, 0, 0, 0);
+            holder.category = (TextView) convertView.findViewById(R.id.Title);
+            holder.category_icon = (TextView) convertView.findViewById(R.id.category_icon);
 
             convertView.setTag(holder);
 
-        }else{
+        } else {
             holder = (LeftMenuListAdapter.ViewHolder) convertView.getTag();
         }
 
@@ -75,7 +77,7 @@ public class LeftMenuListAdapter extends ArrayAdapter {
         return convertView;
     }
 
- private class ViewHolder{
-         TextView category, category_icon;
+    private class ViewHolder {
+        TextView category, category_icon;
     }
 }
