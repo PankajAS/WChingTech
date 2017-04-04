@@ -53,7 +53,7 @@ public class LeftMenuListAdapter extends ArrayAdapter {
             convertView = inflater.inflate(R.layout.left_menu_list_items, null, true);
             utils.setFontForContainer(context, parent);
             RelativeLayout relativeLayout = (RelativeLayout) convertView.findViewById(R.id.relativelayout);
-            relativeLayout.setPadding(15, 0, 0, 0);
+            relativeLayout.setPadding(40, 0, 0, 0);
             holder.category = (TextView) convertView.findViewById(R.id.Title);
             holder.category_icon = (TextView) convertView.findViewById(R.id.category_icon);
 
