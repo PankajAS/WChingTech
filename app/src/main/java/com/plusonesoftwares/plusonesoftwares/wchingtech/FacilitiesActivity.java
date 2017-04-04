@@ -58,7 +58,7 @@ public class FacilitiesActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 util.setUserPrefs(util.SubMenuPageUrl,subMenuPageUrl.get(i),getApplicationContext());
-                util.setUserPrefs(util.SelectedItem, util.getEncodedString(subMenuDsclist.get(i)), getApplicationContext());
+                util.setUserPrefs(util.SelectedItem, subMenuDsclist.get(i), getApplicationContext());
                 finish();
             }
         });
