@@ -3,7 +3,6 @@ package com.plusonesoftwares.plusonesoftwares.wchingtech;
 import org.jsoup.Jsoup;
 
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by Plus 3 on 03-04-2017.

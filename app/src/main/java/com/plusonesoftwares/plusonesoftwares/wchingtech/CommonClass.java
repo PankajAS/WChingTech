@@ -5,12 +5,8 @@ import android.content.SharedPreferences;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.plusonesoftwares.plusonesoftwares.wchingtech.FontManager.FontManager;
-
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by ashoksharma on 02/03/17.

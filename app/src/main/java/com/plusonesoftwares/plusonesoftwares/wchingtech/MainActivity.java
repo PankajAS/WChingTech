@@ -48,10 +48,6 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -78,87 +74,98 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("Home");
-        setSupportActionBar(toolbar);
-        Intent intent = getIntent();
-        utils = new CommonClass();
-        left_drawer_list = (ListView) findViewById(R.id.left_drawer_list);
-        right_drawer_list = (ListView) findViewById(R.id.right_drawer_list);
-        left_Menu_Items = new ArrayList<>();
-        right_Menu_Items = new ArrayList<>();
-        left_menu_icons = new ArrayList<>();
-        utils.setUserPrefs(utils.SubMenuPageUrl, "", getApplicationContext());
-        utils.setUserPrefs(utils.SelectedItem, "", getApplicationContext());
+        try {
+            toolbar = (Toolbar) findViewById(R.id.toolbar);
+            toolbar.setTitle("Home");
+            setSupportActionBar(toolbar);
+            Intent intent = getIntent();
+            utils = new CommonClass();
+            left_drawer_list = (ListView) findViewById(R.id.left_drawer_list);
+            right_drawer_list = (ListView) findViewById(R.id.right_drawer_list);
+            left_Menu_Items = new ArrayList<>();
+            right_Menu_Items = new ArrayList<>();
+            left_menu_icons = new ArrayList<>();
 
-        response = utils.getUserPrefs(utils.response, getApplicationContext());
-        CompanyName =utils.getUserPrefs(utils.ComapnyName ,getApplicationContext());
-        UserName = utils.getUserPrefs(utils.UserName ,getApplicationContext());
-        Passowrd = utils.getUserPrefs(utils.Passowrd ,getApplicationContext());
-        userdesc = utils.getUserPrefs(utils.userdesc, getApplicationContext());
-        companydesc = utils.getUserPrefs(utils.companydesc, getApplicationContext());
+            utils.setUserPrefs(utils.SubMenuPageUrl, "", getApplicationContext());
+            utils.setUserPrefs(utils.SelectedItem, "", getApplicationContext());
 
-        webView = (WebView) findViewById(R.id.webView);
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.getSettings().setLoadWithOverviewMode(true);
-        webView.getSettings().setUseWideViewPort(true);
-        webView.setWebViewClient(new MyBrowser());
-        webView.loadUrl("http://x.hkgws.com/x/servlet/Login_process?login_name=" + UserName + "&login_password=" + Passowrd + "&company_id=" + CompanyName + "&storecompany=" + response + "&isMobile=Y");
+            response = utils.getUserPrefs(utils.response, getApplicationContext());
+            CompanyName = utils.getUserPrefs(utils.ComapnyName, getApplicationContext());
+            UserName = utils.getUserPrefs(utils.UserName, getApplicationContext());
+            Passowrd = utils.getUserPrefs(utils.Passowrd, getApplicationContext());
+            userdesc = utils.getUserPrefs(utils.userdesc, getApplicationContext());
+            companydesc = utils.getUserPrefs(utils.companydesc, getApplicationContext());
 
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
+            webView = (WebView) findViewById(R.id.webView);
+            webView.getSettings().setJavaScriptEnabled(true);
+            webView.getSettings().setLoadWithOverviewMode(true);
+            webView.getSettings().setUseWideViewPort(true);
+            webView.setWebViewClient(new MyBrowser());
+            webView.loadUrl("http://x.hkgws.com/x/servlet/Login_process?login_name=" + UserName + "&login_password=" + Passowrd + "&company_id=" + CompanyName + "&storecompany=" + response + "&isMobile=Y");
 
-        //set adapter
-        left_Menu_adapter = new LeftMenuListAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, left_Menu_Items, left_menu_icons);
-        right_Menu_adapter = new RightMenuListAdapter(getApplicationContext(), R.layout.single_item_layout_right_menu, right_Menu_Items);
-        left_drawer_list.setAdapter(left_Menu_adapter);
-        right_drawer_list.setAdapter(right_Menu_adapter);
+            drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                    this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+            drawer.setDrawerListener(toggle);
+            toggle.syncState();
 
-        //set header
-        LayoutInflater inflater = getLayoutInflater();
-        ViewGroup header = (ViewGroup) inflater.inflate(R.layout.nav_header_main, left_drawer_list, false);
-        TextView txtuserdesc = (TextView) header.findViewById(R.id.txtusername);
-        ImageView profileImage = (ImageView) header.findViewById(R.id.profileImage);
-        Picasso.with(getApplicationContext()).load(utils.getUserPrefs(utils.companydesc, getApplicationContext())).into(profileImage);
-        txtuserdesc.setText(userdesc);
-        left_drawer_list.addHeaderView(header, null, false);
+            //set adapter
+            left_Menu_adapter = new LeftMenuListAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, left_Menu_Items, left_menu_icons);
+            right_Menu_adapter = new RightMenuListAdapter(getApplicationContext(), R.layout.single_item_layout_right_menu, right_Menu_Items);
+            left_drawer_list.setAdapter(left_Menu_adapter);
+            right_drawer_list.setAdapter(right_Menu_adapter);
 
-        //set footer
-        ViewGroup footer = (ViewGroup) inflater.inflate(R.layout.logout_event_layout, right_drawer_list, false);
-        right_drawer_list.addFooterView(footer);
-        LinearLayout linearLayout = (LinearLayout) footer.findViewById(R.id.linearlayout);
+            //set header
+            LayoutInflater inflater = getLayoutInflater();
+            ViewGroup header = (ViewGroup) inflater.inflate(R.layout.nav_header_main, left_drawer_list, false);
+            TextView txtuserdesc = (TextView) header.findViewById(R.id.txtusername);
+            ImageView profileImage = (ImageView) header.findViewById(R.id.profileImage);
+            Picasso.with(getApplicationContext()).load(utils.getUserPrefs(utils.companydesc, getApplicationContext())).into(profileImage);
+            txtuserdesc.setText(userdesc);
+            left_drawer_list.addHeaderView(header, null, false);
 
-        linearLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //clear session on logout click
-                utils.setUserPrefs(utils.response, "" ,getApplicationContext());
-                utils.setUserPrefs(utils.ComapnyName, "" ,getApplicationContext());
-                utils.setUserPrefs(utils.UserName, "" ,getApplicationContext());
-                utils.setUserPrefs(utils.Passowrd, "" ,getApplicationContext());
-                utils.setUserPrefs(utils.userdesc, "" ,getApplicationContext());
-                utils.setUserPrefs(utils.companydesc,"" ,getApplicationContext());
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-        getLeftMenu("en");
+            //set footer
+            ViewGroup footer = (ViewGroup) inflater.inflate(R.layout.logout_event_layout, right_drawer_list, false);
+            right_drawer_list.addFooterView(footer);
+            LinearLayout linearLayout = (LinearLayout) footer.findViewById(R.id.linearlayout);
 
+            linearLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //clear session on logout click
+                    utils.setUserPrefs(utils.response, "", getApplicationContext());
+                    utils.setUserPrefs(utils.ComapnyName, "", getApplicationContext());
+                    utils.setUserPrefs(utils.UserName, "", getApplicationContext());
+                    utils.setUserPrefs(utils.Passowrd, "", getApplicationContext());
+                    utils.setUserPrefs(utils.userdesc, "", getApplicationContext());
+                    utils.setUserPrefs(utils.companydesc, "", getApplicationContext());
+                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            });
+            getLeftMenu("en");
+        }
+        catch(Exception e)
+        {
+            Toast.makeText(getApplicationContext(), "onCreate Main: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
     protected void onResume() {
+        try{
 
-        if (utils.getUserPrefs(utils.SubMenuPageUrl, getApplicationContext()) != null && !utils.getUserPrefs(utils.SubMenuPageUrl, getApplicationContext()).isEmpty()) {
-            webView.loadUrl(utils.getUserPrefs(utils.SubMenuPageUrl, getApplicationContext()));
-            toolbar.setTitle(utils.getUserPrefs(utils.SelectedItem, getApplicationContext()));
+            if (utils.getUserPrefs(utils.SubMenuPageUrl, getApplicationContext()) != null && !utils.getUserPrefs(utils.SubMenuPageUrl, getApplicationContext()).isEmpty()) {
+                webView.loadUrl(utils.getUserPrefs(utils.SubMenuPageUrl, getApplicationContext()));
+                toolbar.setTitle(utils.getUserPrefs(utils.SelectedItem, getApplicationContext()));
+            }
+            super.onResume();
         }
-
-        super.onResume();
+        catch(Exception e)
+        {
+            Toast.makeText(getApplicationContext(), "onResume : " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 
     private void getRightMenu() {

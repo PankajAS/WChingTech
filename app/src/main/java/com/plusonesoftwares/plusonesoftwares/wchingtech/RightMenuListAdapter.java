@@ -1,9 +1,7 @@
 package com.plusonesoftwares.plusonesoftwares.wchingtech;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.support.annotation.NonNull;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

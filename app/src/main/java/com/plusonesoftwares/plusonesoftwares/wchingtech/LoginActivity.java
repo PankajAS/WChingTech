@@ -1,10 +1,6 @@
 package com.plusonesoftwares.plusonesoftwares.wchingtech;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,29 +10,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.Checkable;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.plusonesoftwares.plusonesoftwares.wchingtech.FontManager.FontManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
-import java.util.Map;
-
 public class LoginActivity extends AppCompatActivity {
     EditText txtCompanyName, txtUserName, txtPasswords;
     Button btnLogin;
@@ -53,44 +41,53 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_layout);
-        utils = new CommonClass();
-        //check session before loading of login screen if session exist
-        if (utils.getUserPrefs(utils.UserName, getApplicationContext()) != null && !utils.getUserPrefs(utils.UserName, getApplicationContext()).isEmpty()) {
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(intent);
-        }
-        else {
 
-            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-            linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
+        try
+        {
+            utils = new CommonClass();
+            //check session before loading of login screen if session exist
+            if (utils.getUserPrefs(utils.UserName, getApplicationContext()) != null && !utils.getUserPrefs(utils.UserName, getApplicationContext()).isEmpty()) {
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+            else {
 
-            txtCompanyName = (EditText) findViewById(R.id.txtCompanyName);
-            txtUserName = (EditText) findViewById(R.id.txtUserName);
-            txtPasswords = (EditText) findViewById(R.id.txtPasswords);
-            utils.setFontForContainer(getApplicationContext(), linearLayout);
-            btnLogin = (Button) findViewById(R.id.btnLogin);
-            progressDialog = new ProgressDialog(this);
-            jsonObject = new JSONObject();
+                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+                getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
 
-            btnLogin.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    login();
-                }
-            });
+                txtCompanyName = (EditText) findViewById(R.id.txtCompanyName);
+                txtUserName = (EditText) findViewById(R.id.txtUserName);
+                txtPasswords = (EditText) findViewById(R.id.txtPasswords);
+                utils.setFontForContainer(getApplicationContext(), linearLayout);
+                btnLogin = (Button) findViewById(R.id.btnLogin);
+                progressDialog = new ProgressDialog(this);
+                jsonObject = new JSONObject();
+
+                btnLogin.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        login();
+                    }
+                });
+            }
+        } catch(Exception e)
+        {
+            Toast.makeText(getApplicationContext(), "onCreate Login : " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
     private void login() {
 
-         ComapnyName = txtCompanyName.getText().toString();
-         UserName = txtUserName.getText().toString();
-         Passowrd = txtPasswords.getText().toString();
-        final String device_unique_id = Settings.Secure.getString(this.getContentResolver(),
-                Settings.Secure.ANDROID_ID);
+        try
+        {
+            ComapnyName = txtCompanyName.getText().toString();
+            UserName = txtUserName.getText().toString();
+            Passowrd = txtPasswords.getText().toString();
+            final String device_unique_id = Settings.Secure.getString(this.getContentResolver(),
+                    Settings.Secure.ANDROID_ID);
 
-        if (ComapnyName != null && UserName != null && Passowrd != null && !ComapnyName.isEmpty() && !UserName.isEmpty() && !Passowrd.isEmpty()) {
+            if (ComapnyName != null && UserName != null && Passowrd != null && !ComapnyName.isEmpty() && !UserName.isEmpty() && !Passowrd.isEmpty()) {
 
             progressDialog.setMessage("Loading....");
             progressDialog.show();
@@ -134,12 +131,16 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), error.getMessage().toString(), Toast.LENGTH_SHORT).show();
                 }
             });
-            requestQueue.add(req);
-            requestQueue.start();
-        } else {
-            Toast.makeText(getApplicationContext(), "Please fill the required information", Toast.LENGTH_SHORT).show();
+                requestQueue.add(req);
+                requestQueue.start();
+            } else {
+                Toast.makeText(getApplicationContext(), "Please fill the required information", Toast.LENGTH_SHORT).show();
+            }
         }
-
+        catch(Exception e)
+        {
+            Toast.makeText(getApplicationContext(), "login Method : " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 
     private void manageSession(JSONObject response) throws JSONException {
@@ -150,6 +151,4 @@ public class LoginActivity extends AppCompatActivity {
         utils.setUserPrefs(utils.userdesc, response.getString("userdesc") ,getApplicationContext());
         utils.setUserPrefs(utils.companydesc, response.getString("companydesc") ,getApplicationContext());
     }
-
-
 }
