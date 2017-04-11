@@ -3,8 +3,10 @@ package com.plusonesoftwares.plusonesoftwares.wchingtech;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -71,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     String pushUrl = "http://x.hkgws.com/x/servlet/PushNotifications";
     List<String> listicons;
     Toolbar toolbar;
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -270,7 +273,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-
                             VolleyLog.v("Response:%n %s", response.toString(4));
                             left_Menu_Items.clear();
                             LeftMenuArray = response.getJSONArray("menu_base");
@@ -336,6 +338,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             view.loadUrl(url);
             return true;
+        }
+
+        @Override
+        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            if (utils.getUserPrefs(utils.SubMenuPageUrl, getApplicationContext()) != null && !utils.getUserPrefs(utils.SubMenuPageUrl, getApplicationContext()).isEmpty())
+            {
+                progressDialog = new ProgressDialog(MainActivity.this);
+                progressDialog.setMessage("Loading..");
+                progressDialog.show();
+            }
+        }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            if (utils.getUserPrefs(utils.SubMenuPageUrl, getApplicationContext()) != null && !utils.getUserPrefs(utils.SubMenuPageUrl, getApplicationContext()).isEmpty()) {
+                progressDialog.dismiss();
+            }
         }
     }
 
