@@ -45,49 +45,60 @@ public class LoginActivity extends AppCompatActivity {
         try
         {
             utils = new CommonClass();
+            progressDialog = new ProgressDialog(this);
+
             //check session before loading of login screen if session exist
             if (utils.getUserPrefs(utils.UserName, getApplicationContext()) != null && !utils.getUserPrefs(utils.UserName, getApplicationContext()).isEmpty()) {
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+//                startActivity(intent);
+                ComapnyName = utils.getUserPrefs(utils.ComapnyName, getApplicationContext());
+                UserName = utils.getUserPrefs(utils.UserName, getApplicationContext());
+                Passowrd = utils.getUserPrefs(utils.Passowrd, getApplicationContext());
+                login(false);
             }
-            else {
-
-                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-                getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-                linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
-
-                txtCompanyName = (EditText) findViewById(R.id.txtCompanyName);
-                txtUserName = (EditText) findViewById(R.id.txtUserName);
-                txtPasswords = (EditText) findViewById(R.id.txtPasswords);
-                utils.setFontForContainer(getApplicationContext(), linearLayout);
-                btnLogin = (Button) findViewById(R.id.btnLogin);
-                progressDialog = new ProgressDialog(this);
-                jsonObject = new JSONObject();
-
-                btnLogin.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        login();
-                    }
-                });
+            else
+            {
+                initializeLoginForm();
             }
+
         } catch(Exception e)
         {
             Toast.makeText(getApplicationContext(), "onCreate Login : " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
-    private void login() {
+    private void initializeLoginForm() {
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
+
+        txtCompanyName = (EditText) findViewById(R.id.txtCompanyName);
+        txtUserName = (EditText) findViewById(R.id.txtUserName);
+        txtPasswords = (EditText) findViewById(R.id.txtPasswords);
+        utils.setFontForContainer(getApplicationContext(), linearLayout);
+        btnLogin = (Button) findViewById(R.id.btnLogin);
+        jsonObject = new JSONObject();
+
+        btnLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ComapnyName = txtCompanyName.getText().toString();
+                UserName = txtUserName.getText().toString();
+                Passowrd = txtPasswords.getText().toString();
+                login(true);
+            }
+        });
+    }
+
+    private void login(final boolean LoginFirstTime) {
 
         try
         {
-            ComapnyName = txtCompanyName.getText().toString();
-            UserName = txtUserName.getText().toString();
-            Passowrd = txtPasswords.getText().toString();
             final String device_unique_id = Settings.Secure.getString(this.getContentResolver(),
                     Settings.Secure.ANDROID_ID);
 
             if (ComapnyName != null && UserName != null && Passowrd != null && !ComapnyName.isEmpty() && !UserName.isEmpty() && !Passowrd.isEmpty()) {
+
 
             progressDialog.setMessage("Loading....");
             progressDialog.show();
@@ -114,16 +125,23 @@ public class LoginActivity extends AppCompatActivity {
                                    manageSession(response);
                                    startActivity(intent);
                                    finish();
+
                                    progressDialog.dismiss();
-                                   txtCompanyName.setText("");
-                                   txtPasswords.setText("");
-                                   txtUserName.setText("");
+                                   if(LoginFirstTime) {
+                                       txtCompanyName.setText("");
+                                       txtPasswords.setText("");
+                                       txtUserName.setText("");
+                                   }
                                    //  pushNotification(device_unique_id);
                                }
-                               else
+                               else if (LoginFirstTime)
                                {
                                    Toast.makeText(LoginActivity.this, "Please try again with correct login detail", Toast.LENGTH_LONG).show();
                                    progressDialog.dismiss();
+                               }
+                               else
+                               {
+                                   initializeLoginForm();
                                }
 
                             } catch (JSONException e) {
