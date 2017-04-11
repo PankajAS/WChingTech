@@ -109,15 +109,22 @@ public class LoginActivity extends AppCompatActivity {
 
                             try {
                                 VolleyLog.v("Response:%n %s", response.toString(4));
-                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                manageSession(response);
-                                startActivity(intent);
-                                finish();
-                                progressDialog.dismiss();
-                                txtCompanyName.setText("");
-                                txtPasswords.setText("");
-                                txtUserName.setText("");
-                              //  pushNotification(device_unique_id);
+                               if(response.getString("login_status").equals("Y")) {
+                                   Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                   manageSession(response);
+                                   startActivity(intent);
+                                   finish();
+                                   progressDialog.dismiss();
+                                   txtCompanyName.setText("");
+                                   txtPasswords.setText("");
+                                   txtUserName.setText("");
+                                   //  pushNotification(device_unique_id);
+                               }
+                               else
+                               {
+                                   Toast.makeText(LoginActivity.this, "Please try again with correct login detail", Toast.LENGTH_LONG).show();
+                                   progressDialog.dismiss();
+                               }
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
