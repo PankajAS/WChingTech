@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
@@ -48,6 +49,7 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -109,12 +111,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             drawer.setDrawerListener(toggle);
             toggle.syncState();
 
-            //set adapter
-            left_Menu_adapter = new LeftMenuListAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, left_Menu_Items, left_menu_icons);
-            right_Menu_adapter = new RightMenuListAdapter(getApplicationContext(), R.layout.single_item_layout_right_menu, right_Menu_Items);
-            left_drawer_list.setAdapter(left_Menu_adapter);
-            right_drawer_list.setAdapter(right_Menu_adapter);
-
             //set header
             LayoutInflater inflater = getLayoutInflater();
             ViewGroup header = (ViewGroup) inflater.inflate(R.layout.nav_header_main, left_drawer_list, false);
@@ -123,11 +119,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Picasso.with(getApplicationContext()).load(utils.getUserPrefs(utils.companydesc, getApplicationContext())).into(profileImage);
             txtuserdesc.setText(userdesc);
             left_drawer_list.addHeaderView(header, null, false);
+            left_Menu_adapter = new LeftMenuListAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, left_Menu_Items, left_menu_icons);
+            left_drawer_list.setAdapter(left_Menu_adapter);
 
             //set footer
             ViewGroup footer = (ViewGroup) inflater.inflate(R.layout.logout_event_layout, right_drawer_list, false);
             right_drawer_list.addFooterView(footer);
             LinearLayout linearLayout = (LinearLayout) footer.findViewById(R.id.linearlayout);
+            right_Menu_adapter = new RightMenuListAdapter(getApplicationContext(), R.layout.single_item_layout_right_menu, right_Menu_Items);
+            right_drawer_list.setAdapter(right_Menu_adapter);
 
             linearLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -139,6 +139,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     utils.setUserPrefs(utils.Passowrd, "", getApplicationContext());
                     utils.setUserPrefs(utils.userdesc, "", getApplicationContext());
                     utils.setUserPrefs(utils.companydesc, "", getApplicationContext());
+
                     Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                     startActivity(intent);
                     finish();
@@ -150,7 +151,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         {
             Toast.makeText(getApplicationContext(), "onCreate Main: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
+        reload();
     }
+
+
+    public void reload() {
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                if(!utils.getUserPrefs(utils.ComapnyName, getApplicationContext()).isEmpty()
+                        && !utils.getUserPrefs(utils.UserName, getApplicationContext()).isEmpty()
+                        && !utils.getUserPrefs(utils.Passowrd, getApplicationContext()).isEmpty()
+                        && !utils.getUserPrefs(utils.response, getApplicationContext()).isEmpty()) {
+                    reload();
+                    webView.loadUrl("http://x.hkgws.com/x/servlet/Login_process?login_name=" + UserName + "&login_password=" + Passowrd + "&company_id=" + CompanyName + "&storecompany=" + response + "&isMobile=Y");
+                    toolbar.setTitle("Home");
+                }
+
+            }
+        }, 720000);
+    }
+
+
 
     @Override
     protected void onResume() {

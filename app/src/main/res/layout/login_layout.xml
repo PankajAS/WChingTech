@@ -114,7 +114,6 @@
             android:text="Login"
             android:layout_height="wrap_content"
             android:id="@+id/btnLogin"
-            android:backgroundTint="#00ccff"
             android:background="@drawable/radious"
             android:textColor="@android:color/white"
             android:layout_width="320dp"
