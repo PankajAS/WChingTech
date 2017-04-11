@@ -175,5 +175,6 @@ public class LoginActivity extends AppCompatActivity {
         utils.setUserPrefs(utils.Passowrd, Passowrd ,getApplicationContext());
         utils.setUserPrefs(utils.userdesc, response.getString("userdesc") ,getApplicationContext());
         utils.setUserPrefs(utils.companydesc, response.getString("companydesc") ,getApplicationContext());
+        utils.setUserPrefs(utils.menushow, response.getString("menushow") ,getApplicationContext());
     }
 }

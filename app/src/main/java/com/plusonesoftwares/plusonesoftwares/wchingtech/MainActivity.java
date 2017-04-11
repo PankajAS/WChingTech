@@ -59,7 +59,7 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     WebView webView;
-    String CompanyName, UserName, Passowrd, response, userdesc, companydesc;
+    String CompanyName, UserName, Passowrd, response, userdesc, companydesc,menushow;
     final String leftMenu_Url = "http://x.hkgws.com/x/servlet/GetIOSMenu";
     final String rightMenu_Url = "http://x.hkgws.com/x/servlet/GetSysLanguage/";
     ListView left_drawer_list, right_drawer_list;
@@ -100,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Passowrd = utils.getUserPrefs(utils.Passowrd, getApplicationContext());
             userdesc = utils.getUserPrefs(utils.userdesc, getApplicationContext());
             companydesc = utils.getUserPrefs(utils.companydesc, getApplicationContext());
+            menushow = utils.getUserPrefs(utils.menushow, getApplicationContext());
 
             webView = (WebView) findViewById(R.id.webView);
             webView.getSettings().setJavaScriptEnabled(true);
@@ -108,48 +109,48 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             webView.setWebViewClient(new MyBrowser());
             webView.loadUrl("http://x.hkgws.com/x/servlet/Login_process?login_name=" + UserName + "&login_password=" + Passowrd + "&company_id=" + CompanyName + "&storecompany=" + response + "&isMobile=Y");
 
-            drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                    this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-            drawer.setDrawerListener(toggle);
-            toggle.syncState();
+                drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                        this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                drawer.setDrawerListener(toggle);
+                toggle.syncState();
 
-            //set header
-            LayoutInflater inflater = getLayoutInflater();
-            ViewGroup header = (ViewGroup) inflater.inflate(R.layout.nav_header_main, left_drawer_list, false);
-            TextView txtuserdesc = (TextView) header.findViewById(R.id.txtusername);
-            ImageView profileImage = (ImageView) header.findViewById(R.id.profileImage);
-            Picasso.with(getApplicationContext()).load(utils.getUserPrefs(utils.companydesc, getApplicationContext())).into(profileImage);
-            txtuserdesc.setText(userdesc);
-            left_drawer_list.addHeaderView(header, null, false);
-            left_Menu_adapter = new LeftMenuListAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, left_Menu_Items, left_menu_icons);
-            left_drawer_list.setAdapter(left_Menu_adapter);
+                //set header
+                LayoutInflater inflater = getLayoutInflater();
+                ViewGroup header = (ViewGroup) inflater.inflate(R.layout.nav_header_main, left_drawer_list, false);
+                TextView txtuserdesc = (TextView) header.findViewById(R.id.txtusername);
+                ImageView profileImage = (ImageView) header.findViewById(R.id.profileImage);
+                Picasso.with(getApplicationContext()).load(utils.getUserPrefs(utils.companydesc, getApplicationContext())).into(profileImage);
+                txtuserdesc.setText(userdesc);
+                left_drawer_list.addHeaderView(header, null, false);
+                left_Menu_adapter = new LeftMenuListAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, left_Menu_Items, left_menu_icons);
+                left_drawer_list.setAdapter(left_Menu_adapter);
 
-            //set footer
-            ViewGroup footer = (ViewGroup) inflater.inflate(R.layout.logout_event_layout, right_drawer_list, false);
-            right_drawer_list.addFooterView(footer);
-            LinearLayout linearLayout = (LinearLayout) footer.findViewById(R.id.linearlayout);
-            right_Menu_adapter = new RightMenuListAdapter(getApplicationContext(), R.layout.single_item_layout_right_menu, right_Menu_Items);
-            right_drawer_list.setAdapter(right_Menu_adapter);
+                //set footer
+                ViewGroup footer = (ViewGroup) inflater.inflate(R.layout.logout_event_layout, right_drawer_list, false);
+                right_drawer_list.addFooterView(footer);
+                LinearLayout linearLayout = (LinearLayout) footer.findViewById(R.id.linearlayout);
+                right_Menu_adapter = new RightMenuListAdapter(getApplicationContext(), R.layout.single_item_layout_right_menu, right_Menu_Items);
+                right_drawer_list.setAdapter(right_Menu_adapter);
 
-            linearLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //clear session on logout click
-                    utils.setUserPrefs(utils.response, "", getApplicationContext());
-                    utils.setUserPrefs(utils.ComapnyName, "", getApplicationContext());
-                    utils.setUserPrefs(utils.UserName, "", getApplicationContext());
-                    utils.setUserPrefs(utils.Passowrd, "", getApplicationContext());
-                    utils.setUserPrefs(utils.userdesc, "", getApplicationContext());
-                    utils.setUserPrefs(utils.companydesc, "", getApplicationContext());
+                linearLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //clear session on logout click
+                        utils.setUserPrefs(utils.response, "", getApplicationContext());
+                        utils.setUserPrefs(utils.ComapnyName, "", getApplicationContext());
+                        utils.setUserPrefs(utils.UserName, "", getApplicationContext());
+                        utils.setUserPrefs(utils.Passowrd, "", getApplicationContext());
+                        utils.setUserPrefs(utils.userdesc, "", getApplicationContext());
+                        utils.setUserPrefs(utils.companydesc, "", getApplicationContext());
 
-                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                    startActivity(intent);
-                    finish();
-                }
-            });
-            getLeftMenu("en");
-        }
+                        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                });
+                getLeftMenu("en");
+            }
         catch(Exception e)
         {
             Toast.makeText(getApplicationContext(), "onCreate Main: " + e.getMessage(), Toast.LENGTH_LONG).show();
@@ -265,6 +266,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         params.put("login_name", UserName);
         params.put("company_id", CompanyName);
         params.put("language", language);//using defauld language on page load
+        params.put("menushow", menushow.equals("")?"Y": menushow);//using defauld language on page load
 
         RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
         //call for left Menu

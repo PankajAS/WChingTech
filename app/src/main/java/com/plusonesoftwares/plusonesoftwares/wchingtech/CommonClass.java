@@ -24,6 +24,7 @@ public class CommonClass {
     public static final String Passowrd = "Passowrd";
     public static final String userdesc = "userdesc";
     public static final String companydesc = "companydesc";
+    public static final String menushow = "menushow";
 
 
     SharedPreferences sharedpreferences;
