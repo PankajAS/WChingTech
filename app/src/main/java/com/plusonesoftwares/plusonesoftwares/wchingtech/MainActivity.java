@@ -252,6 +252,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     JSONObject jsonObject = RightMenuArray.getJSONObject(i);
                     //jsonObject.getString("key_value");
                     getLeftMenu(jsonObject.getString("key_value"));
+                    webView.loadUrl("http://x.hkgws.com/x/app_main.do?language_sel_input="+ jsonObject.getString("key_value"));//refreshing web view after selection of language
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
