@@ -200,6 +200,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         {
             Toast.makeText(getApplicationContext(), "onResume : " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
+
+        ValidateUser();//if user and password changed from backend it should redirect user to login page
     }
 
     private void getRightMenu() {
@@ -495,4 +497,67 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
+
+    private void ValidateUser() {
+
+        String loginUrl = "http://x.hkgws.com/x/servlet/JSONLoginServlet";
+        try
+        {
+            final String device_unique_id = Settings.Secure.getString(this.getContentResolver(),
+                    Settings.Secure.ANDROID_ID);
+
+                RequestQueue requestQueue = Volley.newRequestQueue(this);
+                HashMap<String, String> params = new HashMap<String, String>();
+
+                params.put("company_id", CompanyName);
+                params.put("login_name", UserName);
+                params.put("login_password", Passowrd);
+                params.put("token", device_unique_id);
+                params.put("phone_type", "android");
+
+                JsonObjectRequest req = new JsonObjectRequest(loginUrl, new JSONObject(params),
+                        new Response.Listener<JSONObject>() {
+                            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+                            @Override
+                            public void onResponse(JSONObject response) {
+
+                                try {
+                                    VolleyLog.v("Response:%n %s", response.toString(4));
+                                    if(response.getString("login_status").equals("N")) {
+                                        ClearSession();
+                                        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                                }
+                                catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        VolleyLog.e("Error: ", error.getMessage());
+                        progressDialog.dismiss();
+                        Toast.makeText(getApplicationContext(), error.getMessage().toString(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+                requestQueue.add(req);
+                requestQueue.start();
+        }
+        catch(Exception e)
+        {
+            Toast.makeText(getApplicationContext(), "login Method : " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void ClearSession() {
+        utils.setUserPrefs(utils.response, "" ,getApplicationContext());
+        utils.setUserPrefs(utils.ComapnyName, "" ,getApplicationContext());
+        utils.setUserPrefs(utils.UserName, "" ,getApplicationContext());
+        utils.setUserPrefs(utils.Passowrd, "" ,getApplicationContext());
+        utils.setUserPrefs(utils.userdesc, "" ,getApplicationContext());
+        utils.setUserPrefs(utils.companydesc, "",getApplicationContext());
+        utils.setUserPrefs(utils.menushow, "" ,getApplicationContext());
+    }
 }
