@@ -109,58 +109,53 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             webView.setWebViewClient(new MyBrowser());
             webView.loadUrl("http://x.hkgws.com/x/servlet/Login_process?login_name=" + UserName + "&login_password=" + Passowrd + "&company_id=" + CompanyName + "&storecompany=" + response + "&isMobile=Y");
 
-            if(menushow.equals("Y") || menushow.equals("")) {
+            drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                    this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+            drawer.setDrawerListener(toggle);
+            toggle.syncState();
 
-                drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-                ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                        this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-                drawer.setDrawerListener(toggle);
-                toggle.syncState();
+            //set header
+            LayoutInflater inflater = getLayoutInflater();
+            ViewGroup header = (ViewGroup) inflater.inflate(R.layout.nav_header_main, left_drawer_list, false);
+            TextView txtuserdesc = (TextView) header.findViewById(R.id.txtusername);
+            ImageView profileImage = (ImageView) header.findViewById(R.id.profileImage);
+            Picasso.with(getApplicationContext()).load(utils.getUserPrefs(utils.companydesc, getApplicationContext())).into(profileImage);
+            txtuserdesc.setText(userdesc);
+            left_drawer_list.addHeaderView(header, null, false);
+            left_Menu_adapter = new LeftMenuListAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, left_Menu_Items, left_menu_icons);
+            left_drawer_list.setAdapter(left_Menu_adapter);
 
+            //set footer
+            ViewGroup footer = (ViewGroup) inflater.inflate(R.layout.logout_event_layout, right_drawer_list, false);
+            right_drawer_list.addFooterView(footer);
+            LinearLayout linearLayout = (LinearLayout) footer.findViewById(R.id.linearlayout);
+            right_Menu_adapter = new RightMenuListAdapter(getApplicationContext(), R.layout.single_item_layout_right_menu, right_Menu_Items);
+            right_drawer_list.setAdapter(right_Menu_adapter);
 
-                //set header
-                LayoutInflater inflater = getLayoutInflater();
-                ViewGroup header = (ViewGroup) inflater.inflate(R.layout.nav_header_main, left_drawer_list, false);
-                TextView txtuserdesc = (TextView) header.findViewById(R.id.txtusername);
-                ImageView profileImage = (ImageView) header.findViewById(R.id.profileImage);
-                Picasso.with(getApplicationContext()).load(utils.getUserPrefs(utils.companydesc, getApplicationContext())).into(profileImage);
-                txtuserdesc.setText(userdesc);
-                left_drawer_list.addHeaderView(header, null, false);
-                left_Menu_adapter = new LeftMenuListAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, left_Menu_Items, left_menu_icons);
-                left_drawer_list.setAdapter(left_Menu_adapter);
+            linearLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //clear session on logout click
+                    utils.setUserPrefs(utils.response, "", getApplicationContext());
+                    utils.setUserPrefs(utils.ComapnyName, "", getApplicationContext());
+                    utils.setUserPrefs(utils.UserName, "", getApplicationContext());
+                    utils.setUserPrefs(utils.Passowrd, "", getApplicationContext());
+                    utils.setUserPrefs(utils.userdesc, "", getApplicationContext());
+                    utils.setUserPrefs(utils.companydesc, "", getApplicationContext());
 
-                //set footer
-                ViewGroup footer = (ViewGroup) inflater.inflate(R.layout.logout_event_layout, right_drawer_list, false);
-                right_drawer_list.addFooterView(footer);
-                LinearLayout linearLayout = (LinearLayout) footer.findViewById(R.id.linearlayout);
-                right_Menu_adapter = new RightMenuListAdapter(getApplicationContext(), R.layout.single_item_layout_right_menu, right_Menu_Items);
-                right_drawer_list.setAdapter(right_Menu_adapter);
-
-                linearLayout.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        //clear session on logout click
-                        utils.setUserPrefs(utils.response, "", getApplicationContext());
-                        utils.setUserPrefs(utils.ComapnyName, "", getApplicationContext());
-                        utils.setUserPrefs(utils.UserName, "", getApplicationContext());
-                        utils.setUserPrefs(utils.Passowrd, "", getApplicationContext());
-                        utils.setUserPrefs(utils.userdesc, "", getApplicationContext());
-                        utils.setUserPrefs(utils.companydesc, "", getApplicationContext());
-
-                        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                        startActivity(intent);
-                        finish();
-                    }
-                });
-                getLeftMenu("en");
-            }
-            }
+                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            });
+            getLeftMenu("en");
+        }
         catch(Exception e)
         {
             Toast.makeText(getApplicationContext(), "onCreate Main: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
         reload();
-
     }
 
 
@@ -200,8 +195,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         {
             Toast.makeText(getApplicationContext(), "onResume : " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
-
-        ValidateUser();//if user and password changed from backend it should redirect user to login page
+        ValidateUser();
     }
 
     private void getRightMenu() {
@@ -444,9 +438,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        if(menushow.equals("Y") || menushow.equals("")) {
-            getMenuInflater().inflate(R.menu.main, menu);
-        }
+        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
@@ -496,8 +488,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-
-
     private void ValidateUser() {
 
         String loginUrl = "http://x.hkgws.com/x/servlet/JSONLoginServlet";
@@ -506,44 +496,44 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             final String device_unique_id = Settings.Secure.getString(this.getContentResolver(),
                     Settings.Secure.ANDROID_ID);
 
-                RequestQueue requestQueue = Volley.newRequestQueue(this);
-                HashMap<String, String> params = new HashMap<String, String>();
+            RequestQueue requestQueue = Volley.newRequestQueue(this);
+            HashMap<String, String> params = new HashMap<String, String>();
 
-                params.put("company_id", CompanyName);
-                params.put("login_name", UserName);
-                params.put("login_password", Passowrd);
-                params.put("token", device_unique_id);
-                params.put("phone_type", "android");
+            params.put("company_id", CompanyName);
+            params.put("login_name", UserName);
+            params.put("login_password", Passowrd);
+            params.put("token", device_unique_id);
+            params.put("phone_type", "android");
 
-                JsonObjectRequest req = new JsonObjectRequest(loginUrl, new JSONObject(params),
-                        new Response.Listener<JSONObject>() {
-                            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-                            @Override
-                            public void onResponse(JSONObject response) {
+            JsonObjectRequest req = new JsonObjectRequest(loginUrl, new JSONObject(params),
+                    new Response.Listener<JSONObject>() {
+                        @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+                        @Override
+                        public void onResponse(JSONObject response) {
 
-                                try {
-                                    VolleyLog.v("Response:%n %s", response.toString(4));
-                                    if(response.getString("login_status").equals("N")) {
-                                        ClearSession();
-                                        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                                        startActivity(intent);
-                                        finish();
-                                    }
-                                }
-                                catch (JSONException e) {
-                                    e.printStackTrace();
+                            try {
+                                VolleyLog.v("Response:%n %s", response.toString(4));
+                                if(response.getString("login_status").equals("N")) {
+                                    ClearSession();
+                                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                                    startActivity(intent);
+                                    finish();
                                 }
                             }
-                        }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        VolleyLog.e("Error: ", error.getMessage());
-                        progressDialog.dismiss();
-                        Toast.makeText(getApplicationContext(), error.getMessage().toString(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-                requestQueue.add(req);
-                requestQueue.start();
+                            catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    VolleyLog.e("Error: ", error.getMessage());
+                    progressDialog.dismiss();
+                    Toast.makeText(getApplicationContext(), error.getMessage().toString(), Toast.LENGTH_SHORT).show();
+                }
+            });
+            requestQueue.add(req);
+            requestQueue.start();
         }
         catch(Exception e)
         {

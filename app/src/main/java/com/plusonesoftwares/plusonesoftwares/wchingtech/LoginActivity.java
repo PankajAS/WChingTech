@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.MainThread;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -121,7 +122,15 @@ public class LoginActivity extends AppCompatActivity {
                             try {
                                 VolleyLog.v("Response:%n %s", response.toString(4));
                                if(response.getString("login_status").equals("Y")) {
-                                   Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+
+                                   Intent intent = null;
+                                   if(response.getString("menushow").equals("Y") || response.getString("menushow").equals("")) {
+                                       intent = new Intent(LoginActivity.this, MainActivity.class);
+                                   }
+                                   else
+                                   {
+                                       intent = new Intent(LoginActivity.this, WebViewActivity.class);
+                                   }
                                    manageSession(response);
                                    startActivity(intent);
                                    finish();
