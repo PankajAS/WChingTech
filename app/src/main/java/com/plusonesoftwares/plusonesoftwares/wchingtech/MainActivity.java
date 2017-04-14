@@ -109,11 +109,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             webView.setWebViewClient(new MyBrowser());
             webView.loadUrl("http://x.hkgws.com/x/servlet/Login_process?login_name=" + UserName + "&login_password=" + Passowrd + "&company_id=" + CompanyName + "&storecompany=" + response + "&isMobile=Y");
 
+            if(menushow.equals("Y") || menushow.equals("")) {
+
                 drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
                 ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                         this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
                 drawer.setDrawerListener(toggle);
                 toggle.syncState();
+
 
                 //set header
                 LayoutInflater inflater = getLayoutInflater();
@@ -151,11 +154,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 });
                 getLeftMenu("en");
             }
+            }
         catch(Exception e)
         {
             Toast.makeText(getApplicationContext(), "onCreate Main: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
         reload();
+
     }
 
 
@@ -437,7 +442,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        if(menushow.equals("Y") || menushow.equals("")) {
+            getMenuInflater().inflate(R.menu.main, menu);
+        }
         return true;
     }
 
