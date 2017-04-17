@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
@@ -17,6 +18,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
@@ -71,7 +73,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     LeftMenuListAdapter left_Menu_adapter;
     DrawerLayout drawer;
     String pushUrl = "http://x.hkgws.com/x/servlet/PushNotifications";
-    List<String> listicons;
     Toolbar toolbar;
     ProgressDialog progressDialog;
 
@@ -514,10 +515,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             try {
                                 VolleyLog.v("Response:%n %s", response.toString(4));
                                 if(response.getString("login_status").equals("N")) {
-                                    ClearSession();
-                                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                                    startActivity(intent);
-                                    finish();
+
+                                    AlertDialog.Builder messageDialog = new AlertDialog.Builder(MainActivity.this);
+                                    messageDialog.setMessage("Session exipred please login!");
+                                    messageDialog.setTitle("LOGIN");
+                                    messageDialog.setPositiveButton("LOGIN", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            ClearSession();
+                                            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                                            startActivity(intent);
+                                            finish();
+                                        }
+                                    });
+                                    AlertDialog alert = messageDialog.create();
+                                    alert.show();
                                 }
                             }
                             catch (JSONException e) {
