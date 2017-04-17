@@ -81,10 +81,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         try {
+            utils = new CommonClass();
+            CompanyName = utils.getUserPrefs(utils.ComapnyName, getApplicationContext());
+            response = utils.getUserPrefs(utils.response, getApplicationContext());
+            UserName = utils.getUserPrefs(utils.UserName, getApplicationContext());
+            Passowrd = utils.getUserPrefs(utils.Passowrd, getApplicationContext());
+            userdesc = utils.getUserPrefs(utils.userdesc, getApplicationContext());
+            companydesc = utils.getUserPrefs(utils.companydesc, getApplicationContext());
+            menushow = utils.getUserPrefs(utils.menushow, getApplicationContext());
+
             toolbar = (Toolbar) findViewById(R.id.toolbar);
+            toolbar.setTitle(CompanyName);
             setSupportActionBar(toolbar);
             Intent intent = getIntent();
-            utils = new CommonClass();
             left_drawer_list = (ListView) findViewById(R.id.left_drawer_list);
             right_drawer_list = (ListView) findViewById(R.id.right_drawer_list);
             left_Menu_Items = new ArrayList<>();
@@ -94,14 +103,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             utils.setUserPrefs(utils.SubMenuPageUrl, "", getApplicationContext());
             utils.setUserPrefs(utils.SelectedItem, "", getApplicationContext());
 
-            response = utils.getUserPrefs(utils.response, getApplicationContext());
-            CompanyName = utils.getUserPrefs(utils.ComapnyName, getApplicationContext());
-            UserName = utils.getUserPrefs(utils.UserName, getApplicationContext());
-            Passowrd = utils.getUserPrefs(utils.Passowrd, getApplicationContext());
-            userdesc = utils.getUserPrefs(utils.userdesc, getApplicationContext());
-            companydesc = utils.getUserPrefs(utils.companydesc, getApplicationContext());
-            menushow = utils.getUserPrefs(utils.menushow, getApplicationContext());
-            toolbar.setTitle(CompanyName);
             webView = (WebView) findViewById(R.id.webView);
             webView.getSettings().setJavaScriptEnabled(true);
             webView.getSettings().setLoadWithOverviewMode(true);
