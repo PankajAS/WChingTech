@@ -82,7 +82,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         try {
             toolbar = (Toolbar) findViewById(R.id.toolbar);
-            toolbar.setTitle("Home");
             setSupportActionBar(toolbar);
             Intent intent = getIntent();
             utils = new CommonClass();
@@ -102,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             userdesc = utils.getUserPrefs(utils.userdesc, getApplicationContext());
             companydesc = utils.getUserPrefs(utils.companydesc, getApplicationContext());
             menushow = utils.getUserPrefs(utils.menushow, getApplicationContext());
-
+            toolbar.setTitle(CompanyName);
             webView = (WebView) findViewById(R.id.webView);
             webView.getSettings().setJavaScriptEnabled(true);
             webView.getSettings().setLoadWithOverviewMode(true);
@@ -173,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         && !utils.getUserPrefs(utils.response, getApplicationContext()).isEmpty()) {
                     reload();
                     webView.loadUrl("http://x.hkgws.com/x/servlet/Login_process?login_name=" + UserName + "&login_password=" + Passowrd + "&company_id=" + CompanyName + "&storecompany=" + response + "&isMobile=Y");
-                    toolbar.setTitle("Home");
+                    toolbar.setTitle(CompanyName);
                 }
 
             }
@@ -334,7 +333,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 drawer.closeDrawer(Gravity.START);
             }
         });
-
     }
 
     private class MyBrowser extends WebViewClient {
