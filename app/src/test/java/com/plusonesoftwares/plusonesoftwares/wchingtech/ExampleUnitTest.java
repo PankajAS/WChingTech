@@ -1,4 +1,4 @@
-package com.plusonesoftwares.plusonesoftwares.wchingtech;
+package com.hkgws.gladmore;
 
 import org.junit.Test;
 

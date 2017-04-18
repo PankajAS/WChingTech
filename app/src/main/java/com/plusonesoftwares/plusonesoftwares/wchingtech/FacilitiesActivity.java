@@ -1,4 +1,4 @@
-package com.plusonesoftwares.plusonesoftwares.wchingtech;
+package com.hkgws.gladmore;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,13 +26,13 @@ public class FacilitiesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_facilities);
+        util = new CommonClass();
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         subMenuDsclist = new ArrayList<>();
         subMenuPageUrl = new ArrayList<>();
         subMenuIcon = new ArrayList<>();
         list = (ListView)findViewById(R.id.list);
         Intent intent = getIntent();
-        util = new CommonClass();
 
         SubMenuAdapter adapter = new SubMenuAdapter(getApplicationContext(), R.layout.left_menu_list_items, subMenuDsclist, subMenuIcon);
         list.setAdapter(adapter);
@@ -48,16 +49,22 @@ public class FacilitiesActivity extends AppCompatActivity {
             }
             adapter.notifyDataSetChanged();
         } catch (JSONException e) {
-            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "FacilitiesActivity: onCreate : " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
 
 
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                util.setUserPrefs(util.SubMenuPageUrl,subMenuPageUrl.get(i),getApplicationContext());
-                util.setUserPrefs(util.SelectedItem, subMenuDsclist.get(i), getApplicationContext());
-                finish();
+                try {
+                    util.setUserPrefs(util.SubMenuPageUrl, subMenuPageUrl.get(i), getApplicationContext());
+                    util.setUserPrefs(util.SelectedItem, subMenuDsclist.get(i), getApplicationContext());
+                    finish();
+                }
+                catch(Exception e)
+                {
+                    Toast.makeText(getApplicationContext(), "FacilitiesActivity: setOnItemClickListener : " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
             }
         });
 

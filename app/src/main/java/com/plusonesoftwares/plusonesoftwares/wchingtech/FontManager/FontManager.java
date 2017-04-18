@@ -1,4 +1,4 @@
-package com.plusonesoftwares.plusonesoftwares.wchingtech.FontManager;
+package com.hkgws.gladmore.FontManager;
 
 import android.content.Context;
 import android.graphics.Typeface;

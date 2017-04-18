@@ -1,4 +1,4 @@
-package com.plusonesoftwares.plusonesoftwares.wchingtech;
+package com.hkgws.gladmore;
 
 import android.app.ProgressDialog;
 import android.content.Intent;

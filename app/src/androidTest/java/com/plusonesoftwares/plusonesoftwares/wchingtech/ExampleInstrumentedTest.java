@@ -1,4 +1,4 @@
-package com.plusonesoftwares.plusonesoftwares.wchingtech;
+package com.hkgws.gladmore;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.plusonesoftwares.plusonesoftwares.wchingtech", appContext.getPackageName());
+        assertEquals("com.hkgws.gladmore", appContext.getPackageName());
     }
 }

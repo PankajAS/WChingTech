@@ -1,4 +1,4 @@
-package com.plusonesoftwares.plusonesoftwares.wchingtech;
+package com.hkgws.gladmore;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -11,7 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.plusonesoftwares.plusonesoftwares.wchingtech.FontManager.FontManager;
+import com.hkgws.gladmore.FontManager.FontManager;
 
 import org.jsoup.Jsoup;
 import org.w3c.dom.Document;

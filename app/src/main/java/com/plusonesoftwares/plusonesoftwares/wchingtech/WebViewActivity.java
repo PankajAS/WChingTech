@@ -1,4 +1,4 @@
-package com.plusonesoftwares.plusonesoftwares.wchingtech;
+package com.hkgws.gladmore;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -97,8 +97,8 @@ public class WebViewActivity extends AppCompatActivity {
                         && !utils.getUserPrefs(utils.response, getApplicationContext()).isEmpty()) {
                     reload();
                     webView.loadUrl("http://x.hkgws.com/x/servlet/Login_process?login_name=" + UserName + "&login_password=" + Passowrd + "&company_id=" + CompanyName + "&storecompany=" + response + "&isMobile=Y");
+                    ValidateUser();//if user and password changed from backend it should redirect user to login page
                 }
-
             }
         }, 720000);
     }
@@ -106,7 +106,6 @@ public class WebViewActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        ValidateUser();//if user and password changed from backend it should redirect user to login page
     }
 
     private class MyBrowser extends WebViewClient {

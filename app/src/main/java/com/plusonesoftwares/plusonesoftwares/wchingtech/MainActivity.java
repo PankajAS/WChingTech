@@ -1,4 +1,4 @@
-package com.plusonesoftwares.plusonesoftwares.wchingtech;
+package com.hkgws.gladmore;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -174,8 +174,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     reload();
                     webView.loadUrl("http://x.hkgws.com/x/servlet/Login_process?login_name=" + UserName + "&login_password=" + Passowrd + "&company_id=" + CompanyName + "&storecompany=" + response + "&isMobile=Y");
                     toolbar.setTitle(CompanyName);
+                    ValidateUser();//validate user after some time interval
                 }
-
             }
         }, 720000);
     }
@@ -185,7 +185,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onResume() {
         try{
-
             if (utils.getUserPrefs(utils.SubMenuPageUrl, getApplicationContext()) != null && !utils.getUserPrefs(utils.SubMenuPageUrl, getApplicationContext()).isEmpty()) {
                 webView.loadUrl(utils.getUserPrefs(utils.SubMenuPageUrl, getApplicationContext()));
                 toolbar.setTitle(utils.getUserPrefs(utils.SelectedItem, getApplicationContext()));
@@ -196,7 +195,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         {
             Toast.makeText(getApplicationContext(), "onResume : " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
-        ValidateUser();
     }
 
     private void getRightMenu() {
@@ -339,7 +337,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private class MyBrowser extends WebViewClient {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-
             view.loadUrl(url);
             return true;
         }
