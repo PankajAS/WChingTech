@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "297328743233",
+    "firebase_url": "https://wchingtechcommon.firebaseio.com",
+    "project_id": "wchingtechcommon",
+    "storage_bucket": "wchingtechcommon.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:297328743233:android:4259d081763e63a9",
+        "android_client_info": {
+          "package_name": "com.hkgws.gladmore"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "297328743233-mdhcsrbq6618agcfrsfkjulcdvceebna.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyByFPiiIaTWr5NHKzrYALp2eDOmw5E6BKQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

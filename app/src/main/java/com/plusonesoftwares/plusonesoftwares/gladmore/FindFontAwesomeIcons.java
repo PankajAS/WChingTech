@@ -1,4 +1,4 @@
-package com.hkgws.gladmore;
+package com.plusonesoftwares.plusonesoftwares.gladmore;
 
 import org.jsoup.Jsoup;
 

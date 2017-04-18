@@ -1,11 +1,11 @@
-package com.hkgws.gladmore;
+package com.plusonesoftwares.plusonesoftwares.gladmore;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import com.hkgws.gladmore.FontManager.FontManager;
+import com.plusonesoftwares.plusonesoftwares.gladmore.FontManager.FontManager;
 import java.io.UnsupportedEncodingException;
 
 /**

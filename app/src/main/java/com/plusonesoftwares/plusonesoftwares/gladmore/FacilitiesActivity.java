@@ -1,4 +1,4 @@
-package com.hkgws.gladmore;
+package com.plusonesoftwares.plusonesoftwares.gladmore;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +8,8 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.hkgws.gladmore.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;

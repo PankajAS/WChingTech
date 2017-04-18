@@ -1,4 +1,4 @@
-package com.hkgws.gladmore;
+package com.plusonesoftwares.plusonesoftwares.gladmore;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -8,10 +8,10 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.hkgws.gladmore.FontManager.FontManager;
+import com.plusonesoftwares.plusonesoftwares.gladmore.FontManager.FontManager;
+import com.hkgws.gladmore.R;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Plus 3 on 03-04-2017.
