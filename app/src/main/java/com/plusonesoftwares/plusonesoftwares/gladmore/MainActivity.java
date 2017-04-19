@@ -70,7 +70,7 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     WebView webView;
-    String CompanyName, UserName, Passowrd, response, userdesc, companydesc,menushow;
+    String CompanyId, UserName, Passowrd, response, userdesc, companydesc,menushow, CompanyName;
     final String leftMenu_Url = "http://x.hkgws.com/x/servlet/GetIOSMenu";
     final String rightMenu_Url = "http://x.hkgws.com/x/servlet/GetSysLanguage/";
     ListView left_drawer_list, right_drawer_list;
@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         try {
             utils = new CommonClass();
+            CompanyId = utils.getUserPrefs(utils.ComapnyId, getApplicationContext());
             CompanyName = utils.getUserPrefs(utils.ComapnyName, getApplicationContext());
             response = utils.getUserPrefs(utils.response, getApplicationContext());
             UserName = utils.getUserPrefs(utils.UserName, getApplicationContext());
@@ -120,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             webView.getSettings().setLoadWithOverviewMode(true);
             webView.getSettings().setUseWideViewPort(true);
             webView.setWebViewClient(new MyBrowser());
-            webView.loadUrl("http://x.hkgws.com/x/servlet/Login_process?login_name=" + UserName + "&login_password=" + Passowrd + "&company_id=" + CompanyName + "&storecompany=" + response + "&isMobile=Y");
+            webView.loadUrl("http://x.hkgws.com/x/servlet/Login_process?login_name=" + UserName + "&login_password=" + Passowrd + "&company_id=" + CompanyId + "&storecompany=" + response + "&isMobile=Y");
 
             drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -151,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 public void onClick(View view) {
                     //clear session on logout click
                     utils.setUserPrefs(utils.response, "", getApplicationContext());
-                    utils.setUserPrefs(utils.ComapnyName, "", getApplicationContext());
+                    utils.setUserPrefs(utils.ComapnyId, "", getApplicationContext());
                     utils.setUserPrefs(utils.UserName, "", getApplicationContext());
                     utils.setUserPrefs(utils.Passowrd, "", getApplicationContext());
                     utils.setUserPrefs(utils.userdesc, "", getApplicationContext());
@@ -215,12 +216,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void run() {
 
-                if(!utils.getUserPrefs(utils.ComapnyName, getApplicationContext()).isEmpty()
+                if(!utils.getUserPrefs(utils.ComapnyId, getApplicationContext()).isEmpty()
                         && !utils.getUserPrefs(utils.UserName, getApplicationContext()).isEmpty()
                         && !utils.getUserPrefs(utils.Passowrd, getApplicationContext()).isEmpty()
                         && !utils.getUserPrefs(utils.response, getApplicationContext()).isEmpty()) {
                     reload();
-                    webView.loadUrl("http://x.hkgws.com/x/servlet/Login_process?login_name=" + UserName + "&login_password=" + Passowrd + "&company_id=" + CompanyName + "&storecompany=" + response + "&isMobile=Y");
+                    webView.loadUrl("http://x.hkgws.com/x/servlet/Login_process?login_name=" + UserName + "&login_password=" + Passowrd + "&company_id=" + CompanyId + "&storecompany=" + response + "&isMobile=Y");
                     toolbar.setTitle(CompanyName);
                     ValidateUser();//validate user after some time interval
                 }
@@ -269,7 +270,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void getRightMenu() {
         // Post params to be sent to the server
         HashMap<String, String> params1 = new HashMap<String, String>();
-        params1.put("company_id", CompanyName);
+        params1.put("company_id", CompanyId);
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         JsonObjectRequest req = new JsonObjectRequest(rightMenu_Url, new JSONObject(params1),
                 new Response.Listener<JSONObject>() {
@@ -334,7 +335,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void getLeftMenu(String language) {
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("login_name", UserName);
-        params.put("company_id", CompanyName);
+        params.put("company_id", CompanyId);
         params.put("language", language);//using defauld language on page load
         params.put("menushow", menushow.equals("")?"Y": menushow);//using defauld language on page load
 
@@ -565,7 +566,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             RequestQueue requestQueue = Volley.newRequestQueue(this);
             HashMap<String, String> params = new HashMap<String, String>();
 
-            params.put("company_id", CompanyName);
+            params.put("company_id", CompanyId);
             params.put("login_name", UserName);
             params.put("login_password", Passowrd);
             params.put("token", device_unique_id);
@@ -619,6 +620,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void ClearSession() {
         utils.setUserPrefs(utils.response, "" ,getApplicationContext());
+        utils.setUserPrefs(utils.ComapnyId, "" ,getApplicationContext());
         utils.setUserPrefs(utils.ComapnyName, "" ,getApplicationContext());
         utils.setUserPrefs(utils.UserName, "" ,getApplicationContext());
         utils.setUserPrefs(utils.Passowrd, "" ,getApplicationContext());

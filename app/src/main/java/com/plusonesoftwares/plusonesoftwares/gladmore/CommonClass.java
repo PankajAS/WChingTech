@@ -19,6 +19,7 @@ public class CommonClass {
     public static final String SelectedItem = "SelectedItem";
 
     public static final String response = "response";
+    public static final String ComapnyId = "ComapnyId";
     public static final String ComapnyName = "ComapnyName";
     public static final String UserName = "UserName";
     public static final String Passowrd = "Passowrd";

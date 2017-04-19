@@ -34,7 +34,7 @@ public class LoginActivity extends AppCompatActivity {
     JSONObject jsonObject;
     String loginUrl = "http://x.hkgws.com/x/servlet/JSONLoginServlet";
     LinearLayout linearLayout;
-     String ComapnyName ;
+     String ComapnyId;
      String UserName ;
      String Passowrd ;
 
@@ -51,7 +51,7 @@ public class LoginActivity extends AppCompatActivity {
             if (utils.getUserPrefs(utils.UserName, getApplicationContext()) != null && !utils.getUserPrefs(utils.UserName, getApplicationContext()).isEmpty()) {
 //                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
 //                startActivity(intent);
-                ComapnyName = utils.getUserPrefs(utils.ComapnyName, getApplicationContext());
+                ComapnyId = utils.getUserPrefs(utils.ComapnyId, getApplicationContext());
                 UserName = utils.getUserPrefs(utils.UserName, getApplicationContext());
                 Passowrd = utils.getUserPrefs(utils.Passowrd, getApplicationContext());
                 login(false);
@@ -82,7 +82,7 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ComapnyName = txtCompanyName.getText().toString();
+                ComapnyId = txtCompanyName.getText().toString();
                 UserName = txtUserName.getText().toString();
                 Passowrd = txtPasswords.getText().toString();
                 login(true);
@@ -97,7 +97,7 @@ public class LoginActivity extends AppCompatActivity {
             final String device_unique_id = Settings.Secure.getString(this.getContentResolver(),
                     Settings.Secure.ANDROID_ID);
 
-            if (ComapnyName != null && UserName != null && Passowrd != null && !ComapnyName.isEmpty() && !UserName.isEmpty() && !Passowrd.isEmpty()) {
+            if (ComapnyId != null && UserName != null && Passowrd != null && !ComapnyId.isEmpty() && !UserName.isEmpty() && !Passowrd.isEmpty()) {
 
 
             progressDialog.setMessage("Loading....");
@@ -106,7 +106,7 @@ public class LoginActivity extends AppCompatActivity {
             RequestQueue requestQueue = Volley.newRequestQueue(this);
             HashMap<String, String> params = new HashMap<String, String>();
 
-            params.put("company_id", ComapnyName);
+            params.put("company_id", ComapnyId);
             params.put("login_name", UserName);
             params.put("login_password", Passowrd);
             params.put("token", device_unique_id);
@@ -178,7 +178,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private void manageSession(JSONObject response) throws JSONException {
         utils.setUserPrefs(utils.response, response.getString("login_status") ,getApplicationContext());
-        utils.setUserPrefs(utils.ComapnyName, ComapnyName ,getApplicationContext());
+        utils.setUserPrefs(utils.ComapnyId, ComapnyId,getApplicationContext());
+        utils.setUserPrefs(utils.ComapnyName, response.getString("companyname"),getApplicationContext());
         utils.setUserPrefs(utils.UserName, UserName ,getApplicationContext());
         utils.setUserPrefs(utils.Passowrd, Passowrd ,getApplicationContext());
         utils.setUserPrefs(utils.userdesc, response.getString("userdesc") ,getApplicationContext());

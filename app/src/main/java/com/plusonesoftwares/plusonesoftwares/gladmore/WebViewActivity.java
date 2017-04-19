@@ -43,7 +43,7 @@ import java.util.Map;
 public class WebViewActivity extends AppCompatActivity {
 
     WebView webView;
-    String CompanyName, UserName, Passowrd, response, userdesc, companydesc,menushow;
+    String CompanyId, UserName, Passowrd, response, userdesc, companydesc,menushow;
 
     CommonClass utils;
     String pushUrl = "http://x.hkgws.com/x/servlet/PushNotifications";
@@ -56,7 +56,7 @@ public class WebViewActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         utils = new CommonClass();
         response = utils.getUserPrefs(utils.response, getApplicationContext());
-        CompanyName = utils.getUserPrefs(utils.ComapnyName, getApplicationContext());
+        CompanyId = utils.getUserPrefs(utils.ComapnyId, getApplicationContext());
         UserName = utils.getUserPrefs(utils.UserName, getApplicationContext());
         Passowrd = utils.getUserPrefs(utils.Passowrd, getApplicationContext());
         userdesc = utils.getUserPrefs(utils.userdesc, getApplicationContext());
@@ -72,7 +72,7 @@ public class WebViewActivity extends AppCompatActivity {
         progressDialog = new ProgressDialog(WebViewActivity.this);
         progressDialog.setMessage("Loading..");
         progressDialog.show();
-        webView.loadUrl("http://x.hkgws.com/x/servlet/Login_process?login_name=" + UserName + "&login_password=" + Passowrd + "&company_id=" + CompanyName + "&storecompany=" + response + "&isMobile=Y");
+        webView.loadUrl("http://x.hkgws.com/x/servlet/Login_process?login_name=" + UserName + "&login_password=" + Passowrd + "&company_id=" + CompanyId + "&storecompany=" + response + "&isMobile=Y");
         reload();
     }
 
@@ -82,12 +82,12 @@ public class WebViewActivity extends AppCompatActivity {
             @Override
             public void run() {
 
-                if(!utils.getUserPrefs(utils.ComapnyName, getApplicationContext()).isEmpty()
+                if(!utils.getUserPrefs(utils.ComapnyId, getApplicationContext()).isEmpty()
                         && !utils.getUserPrefs(utils.UserName, getApplicationContext()).isEmpty()
                         && !utils.getUserPrefs(utils.Passowrd, getApplicationContext()).isEmpty()
                         && !utils.getUserPrefs(utils.response, getApplicationContext()).isEmpty()) {
                     reload();
-                    webView.loadUrl("http://x.hkgws.com/x/servlet/Login_process?login_name=" + UserName + "&login_password=" + Passowrd + "&company_id=" + CompanyName + "&storecompany=" + response + "&isMobile=Y");
+                    webView.loadUrl("http://x.hkgws.com/x/servlet/Login_process?login_name=" + UserName + "&login_password=" + Passowrd + "&company_id=" + CompanyId + "&storecompany=" + response + "&isMobile=Y");
                     ValidateUser();//if user and password changed from backend it should redirect user to login page
                 }
             }
@@ -226,7 +226,7 @@ public class WebViewActivity extends AppCompatActivity {
             RequestQueue requestQueue = Volley.newRequestQueue(this);
             HashMap<String, String> params = new HashMap<String, String>();
 
-            params.put("company_id", CompanyName);
+            params.put("company_id", CompanyId);
             params.put("login_name", UserName);
             params.put("login_password", Passowrd);
             params.put("token", device_unique_id);
@@ -280,7 +280,7 @@ public class WebViewActivity extends AppCompatActivity {
 
     private void ClearSession() {
         utils.setUserPrefs(utils.response, "" ,getApplicationContext());
-        utils.setUserPrefs(utils.ComapnyName, "" ,getApplicationContext());
+        utils.setUserPrefs(utils.ComapnyId, "" ,getApplicationContext());
         utils.setUserPrefs(utils.UserName, "" ,getApplicationContext());
         utils.setUserPrefs(utils.Passowrd, "" ,getApplicationContext());
         utils.setUserPrefs(utils.userdesc, "" ,getApplicationContext());
