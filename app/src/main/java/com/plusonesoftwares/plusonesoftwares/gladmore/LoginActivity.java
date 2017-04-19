@@ -34,9 +34,7 @@ public class LoginActivity extends AppCompatActivity {
     JSONObject jsonObject;
     String loginUrl = "http://x.hkgws.com/x/servlet/JSONLoginServlet";
     LinearLayout linearLayout;
-     String ComapnyId;
-     String UserName ;
-     String Passowrd ;
+    String ComapnyId, UserName, Passowrd ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +47,6 @@ public class LoginActivity extends AppCompatActivity {
 
             //check session before loading of login screen if session exist
             if (utils.getUserPrefs(utils.UserName, getApplicationContext()) != null && !utils.getUserPrefs(utils.UserName, getApplicationContext()).isEmpty()) {
-//                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-//                startActivity(intent);
                 ComapnyId = utils.getUserPrefs(utils.ComapnyId, getApplicationContext());
                 UserName = utils.getUserPrefs(utils.UserName, getApplicationContext());
                 Passowrd = utils.getUserPrefs(utils.Passowrd, getApplicationContext());
@@ -91,14 +87,12 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void login(final boolean LoginFirstTime) {
-
         try
         {
             final String device_unique_id = Settings.Secure.getString(this.getContentResolver(),
                     Settings.Secure.ANDROID_ID);
 
             if (ComapnyId != null && UserName != null && Passowrd != null && !ComapnyId.isEmpty() && !UserName.isEmpty() && !Passowrd.isEmpty()) {
-
 
             progressDialog.setMessage("Loading....");
             progressDialog.show();

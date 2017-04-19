@@ -1,8 +1,5 @@
 package com.plusonesoftwares.plusonesoftwares.gladmore;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -44,14 +41,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.hkgws.gladmore.R;
@@ -66,7 +61,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     WebView webView;
@@ -171,7 +165,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         reload();
 
         //Firebase push block
-
         mRegistrationBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -182,32 +175,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     // now subscribe to `global` topic to receive app wide notifications
                     FirebaseMessaging.getInstance().subscribeToTopic(Config.TOPIC_GLOBAL);
 
-                    displayFirebaseRegId();
-
                 } else if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
                     // new push notification is received
 
                     String message = intent.getStringExtra("message");
 
                     Toast.makeText(getApplicationContext(), "Push notification: " + message, Toast.LENGTH_LONG).show();
-
-                    //txtMessage.setText(message);
                 }
             }
         };
-
-       // displayFirebaseRegId();
     }
-
-    // Fetches reg id from shared preferences
-    // and displays on the screen
-    private void displayFirebaseRegId() {
-        SharedPreferences pref = getApplicationContext().getSharedPreferences(Config.SHARED_PREF, 0);
-        String regId = pref.getString("regId", null);
-
-        Log.e(TAG, "Firebase reg id: " + regId);
-    }
-
     public void reload() {
 
         final Handler handler = new Handler();
@@ -317,7 +294,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 try {
                     JSONObject jsonObject = RightMenuArray.getJSONObject(i);
-                    //jsonObject.getString("key_value");
                     getLeftMenu(jsonObject.getString("key_value"));
                     webView.loadUrl("http://x.hkgws.com/x/app_main.do?language_sel_input="+ jsonObject.getString("key_value"));//refreshing web view after selection of language
                 } catch (JSONException e) {
@@ -481,7 +457,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         try {
             for (int i = 0; i <= LeftMenuArray.length() - 1; i++) {
                 JSONObject obj = LeftMenuArray.getJSONObject(i);
-                System.out.println(obj.get("menu_description"));
+                //System.out.println(obj.get("menu_description"));
                 if (item.toString().equals(obj.get("menu_description"))) {
                     JSONArray array = obj.getJSONArray("submenu");
                     utils.setUserPrefs(utils.SubMenuPageUrl, "", getApplicationContext());
