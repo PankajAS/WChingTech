@@ -81,7 +81,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ArrayAdapter right_Menu_adapter;
     LeftMenuListAdapter left_Menu_adapter;
     DrawerLayout drawer;
-    String pushUrl = "http://x.hkgws.com/x/servlet/PushNotifications";
     Toolbar toolbar;
     ProgressDialog progressDialog;
     //Firebase push block
@@ -104,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             menushow = utils.getUserPrefs(utils.menushow, getApplicationContext());
 
             toolbar = (Toolbar) findViewById(R.id.toolbar);
-            toolbar.setTitle(CompanyName);
+            toolbar.setTitle(utils.getEncodedString(CompanyName));
             setSupportActionBar(toolbar);
             Intent intent = getIntent();
             left_drawer_list = (ListView) findViewById(R.id.left_drawer_list);
@@ -222,7 +221,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         && !utils.getUserPrefs(utils.response, getApplicationContext()).isEmpty()) {
                     reload();
                     webView.loadUrl("http://x.hkgws.com/x/servlet/Login_process?login_name=" + UserName + "&login_password=" + Passowrd + "&company_id=" + CompanyId + "&storecompany=" + response + "&isMobile=Y");
-                    toolbar.setTitle(CompanyName);
+                    toolbar.setTitle(utils.getEncodedString(CompanyName));
                     ValidateUser();//validate user after some time interval
                 }
             }
@@ -246,7 +245,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         //Firebase push block
-
         // register GCM registration complete receiver
         LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
                 new IntentFilter(Config.REGISTRATION_COMPLETE));
@@ -290,7 +288,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                             }
                             right_Menu_adapter.notifyDataSetChanged();
-                            //pushNotification();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -427,58 +424,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 progressDialog.dismiss();
             }
         }
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    public void pushNotification() {
-
-        final String device_unique_id = Settings.Secure.getString(this.getContentResolver(),
-                Settings.Secure.ANDROID_ID);
-
-        RequestQueue queue = Volley.newRequestQueue(this);
-        HashMap<String, String> params = new HashMap<String, String>();
-
-        StringRequest req = new StringRequest(Request.Method.POST, pushUrl, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                NotificationManager notif = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                Notification notify = new Notification.Builder
-                        (getApplicationContext())
-                        .setContentTitle(response)
-                        .setContentText(response)
-                        .setSmallIcon(R.drawable.gear)
-                        .build();
-
-                PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0,
-                        new Intent(getApplicationContext(), LoginActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
-
-                notify.contentIntent = contentIntent;
-
-                notify.flags |= Notification.FLAG_AUTO_CANCEL;
-                notif.notify(0, notify);
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        }) {
-
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("token", device_unique_id);
-                params.put("type", "dev");
-                params.put("message", "Welcome");
-                return params;
-            }
-
-        };
-        queue.add(req);
-        queue.start();
-
     }
 
     @Override

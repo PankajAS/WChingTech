@@ -132,15 +132,6 @@ public class LoginActivity extends AppCompatActivity {
                                    }
                                    manageSession(response);
                                    startActivity(intent);
-                                   finish();
-
-                                   progressDialog.dismiss();
-                                   if(LoginFirstTime) {
-                                       txtCompanyName.setText("");
-                                       txtPasswords.setText("");
-                                       txtUserName.setText("");
-                                   }
-                                   //  pushNotification(device_unique_id);
                                }
                                else if (LoginFirstTime)
                                {
@@ -159,9 +150,9 @@ public class LoginActivity extends AppCompatActivity {
                     }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    VolleyLog.e("Error: ", error.getMessage());
-                    progressDialog.dismiss();
-                    Toast.makeText(getApplicationContext(), error.getMessage().toString(), Toast.LENGTH_SHORT).show();
+                        VolleyLog.e("Error: ", error.getMessage());
+                        progressDialog.dismiss();
+                        Toast.makeText(getApplicationContext(), "Please try again after some time!", Toast.LENGTH_SHORT).show();
                 }
             });
                 requestQueue.add(req);
@@ -176,6 +167,13 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onStop()
+    {
+        super.onStop();
+        progressDialog.dismiss();
+        finish();
+    }
     private void manageSession(JSONObject response) throws JSONException {
         utils.setUserPrefs(utils.response, response.getString("login_status") ,getApplicationContext());
         utils.setUserPrefs(utils.ComapnyId, ComapnyId,getApplicationContext());

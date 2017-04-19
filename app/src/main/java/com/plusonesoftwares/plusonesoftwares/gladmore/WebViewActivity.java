@@ -114,58 +114,6 @@ public class WebViewActivity extends AppCompatActivity {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    public void pushNotification() {
-
-        final String device_unique_id = Settings.Secure.getString(this.getContentResolver(),
-                Settings.Secure.ANDROID_ID);
-
-        RequestQueue queue = Volley.newRequestQueue(this);
-        HashMap<String, String> params = new HashMap<String, String>();
-
-        StringRequest req = new StringRequest(Request.Method.POST, pushUrl, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                NotificationManager notif = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                Notification notify = new Notification.Builder
-                        (getApplicationContext())
-                        .setContentTitle(response)
-                        .setContentText(response)
-                        .setSmallIcon(R.drawable.gear)
-                        .build();
-
-                PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0,
-                        new Intent(getApplicationContext(), LoginActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
-
-                notify.contentIntent = contentIntent;
-
-                notify.flags |= Notification.FLAG_AUTO_CANCEL;
-                notif.notify(0, notify);
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        }) {
-
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("token", device_unique_id);
-                params.put("type", "dev");
-                params.put("message", "Welcome");
-                return params;
-            }
-
-        };
-        queue.add(req);
-        queue.start();
-
-    }
-
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
