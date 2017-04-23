@@ -36,13 +36,14 @@
             android:layout_toEndOf="@+id/category_icon"
             android:layout_toRightOf="@+id/category_icon"
             android:fontFamily="sans-serif"
-            android:lines="1"
+            android:gravity="center"
+            android:lines="2"
+            android:paddingLeft="10dp"
             android:text="TextView"
+            android:textAlignment="viewStart"
             android:textColor="@android:color/black"
             android:textSize="18sp"
-            tools:ignore="HardcodedText,RtlHardcoded,UnusedAttribute"
-            android:textAlignment="viewStart"
-            android:paddingLeft="10dp" />
+            tools:ignore="HardcodedText,RtlHardcoded,UnusedAttribute" />
 
         <ImageView
             android:id="@+id/ivArrow"

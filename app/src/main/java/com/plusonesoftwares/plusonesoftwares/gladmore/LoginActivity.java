@@ -134,6 +134,7 @@ public class LoginActivity extends AppCompatActivity {
                                }
                                else
                                {
+                                   progressDialog.dismiss();
                                    initializeLoginForm();
                                }
 

@@ -1,5 +1,6 @@
 package com.plusonesoftwares.plusonesoftwares.gladmore;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -7,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,6 +17,7 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -87,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         try {
             utils = new CommonClass();
+            progressDialog = new ProgressDialog(MainActivity.this);
             CompanyId = utils.getUserPrefs(utils.ComapnyId, getApplicationContext());
             CompanyName = utils.getUserPrefs(utils.ComapnyName, getApplicationContext());
             response = utils.getUserPrefs(utils.response, getApplicationContext());
@@ -184,6 +188,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
         };
+
+        isStoragePermissionGranted();
+    }
+
+    public  boolean isStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                Log.v(TAG,"Permission is granted");
+                return true;
+            } else {
+
+                Log.v(TAG,"Permission is revoked");
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                return false;
+            }
+        }
+        else { //permission is automatically granted on sdk<23 upon installation
+            Log.v(TAG,"Permission is granted");
+            return true;
+        }
     }
     public void reload() {
 
@@ -197,15 +222,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         && !utils.getUserPrefs(utils.Passowrd, getApplicationContext()).isEmpty()
                         && !utils.getUserPrefs(utils.response, getApplicationContext()).isEmpty()) {
                     reload();
-                    webView.loadUrl("http://x.hkgws.com/x/servlet/Login_process?login_name=" + UserName + "&login_password=" + Passowrd + "&company_id=" + CompanyId + "&storecompany=" + response + "&isMobile=Y");
+                   // webView.loadUrl("http://x.hkgws.com/x/servlet/Login_process?login_name=" + UserName + "&login_password=" + Passowrd + "&company_id=" + CompanyId + "&storecompany=" + response + "&isMobile=Y");
                     toolbar.setTitle(utils.getEncodedString(CompanyName));
                     ValidateUser();//validate user after some time interval
                 }
             }
-        }, 720000);
+        }, 90000);
     }
-
-
 
     @Override
     protected void onResume() {
@@ -215,12 +238,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 webView.loadUrl(utils.getUserPrefs(utils.SubMenuPageUrl, getApplicationContext()));
                 toolbar.setTitle(utils.getUserPrefs(utils.SelectedItem, getApplicationContext()));
             }
-        }
-        catch(Exception e)
-        {
-            Toast.makeText(getApplicationContext(), "onResume : " + e.getMessage(), Toast.LENGTH_LONG).show();
-        }
-
         //Firebase push block
         // register GCM registration complete receiver
         LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
@@ -233,6 +250,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // clear the notification area when the app is opened
         NotificationUtils.clearNotifications(getApplicationContext());
+        }
+        catch(Exception e)
+        {
+            Toast.makeText(getApplicationContext(), "onResume : " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 
     //Firebase push block
@@ -360,7 +382,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 try {
                     JSONObject obj = LeftMenuArray.getJSONObject(i - 1);
-                    System.out.println(obj.get("menu_description"));
+                    //System.out.println(obj.get("menu_description"));
                     if (left_Menu_Items.get(i - 1).toString().equals(utils.getEncodedString(obj.get("menu_description").toString()))) {
                         JSONArray array = obj.getJSONArray("submenu");
                         utils.setUserPrefs(utils.SubMenuPageUrl, "", getApplicationContext());
@@ -370,7 +392,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
 
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    Toast.makeText(getApplicationContext(), "left_drawer_list clicked : " + e.getMessage(), Toast.LENGTH_LONG).show();
                 }
                 drawer.closeDrawer(Gravity.START);
             }
@@ -388,7 +410,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             if (utils.getUserPrefs(utils.SubMenuPageUrl, getApplicationContext()) != null && !utils.getUserPrefs(utils.SubMenuPageUrl, getApplicationContext()).isEmpty())
             {
-                progressDialog = new ProgressDialog(MainActivity.this);
                 progressDialog.setMessage("Loading..");
                 progressDialog.show();
             }
@@ -501,7 +522,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                             try {
                                 VolleyLog.v("Response:%n %s", response.toString(4));
-                                if(response.getString("login_status").equals("N")) {
+                                if(response.getString("login_status").equals("N") || !response.getString("menushow").equals(menushow) ) {
 
                                     AlertDialog.Builder messageDialog = new AlertDialog.Builder(MainActivity.this);
                                     messageDialog.setMessage("Session exipred please login!");
@@ -516,6 +537,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                     });
                                     AlertDialog alert = messageDialog.create();
                                     alert.show();
+                                }
+                                else
+                                {
+                                    if(!utils.getUserPrefs(utils.ComapnyId, getApplicationContext()).isEmpty()
+                                            && !utils.getUserPrefs(utils.UserName, getApplicationContext()).isEmpty()
+                                            && !utils.getUserPrefs(utils.Passowrd, getApplicationContext()).isEmpty()
+                                            && !utils.getUserPrefs(utils.response, getApplicationContext()).isEmpty()) {
+                                        //reload();
+                                        webView.loadUrl("http://x.hkgws.com/x/servlet/Login_process?login_name=" + UserName + "&login_password=" + Passowrd + "&company_id=" + CompanyId + "&storecompany=" + response + "&isMobile=Y");
+                                        //toolbar.setTitle(utils.getEncodedString(CompanyName));
+                                        //ValidateUser();//validate user after some time interval
+                                    }
                                 }
                             }
                             catch (JSONException e) {
@@ -537,6 +570,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         {
             Toast.makeText(getApplicationContext(), "login Method : " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
+    }
+
+    @Override
+    public void onStop()
+    {
+        super.onStop();
+        progressDialog.dismiss();
+        //finish();
     }
 
     private void ClearSession() {

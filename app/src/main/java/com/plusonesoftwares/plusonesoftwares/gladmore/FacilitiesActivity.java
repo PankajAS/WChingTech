@@ -69,6 +69,5 @@ public class FacilitiesActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 }

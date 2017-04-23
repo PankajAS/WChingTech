@@ -1,5 +1,6 @@
 package com.plusonesoftwares.plusonesoftwares.gladmore;
 
+import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -7,15 +8,18 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -74,6 +78,26 @@ public class WebViewActivity extends AppCompatActivity {
         progressDialog.show();
         webView.loadUrl("http://x.hkgws.com/x/servlet/Login_process?login_name=" + UserName + "&login_password=" + Passowrd + "&company_id=" + CompanyId + "&storecompany=" + response + "&isMobile=Y");
         reload();
+        isStoragePermissionGranted();
+    }
+
+    public  boolean isStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+               // Log.v(TAG,"Permission is granted");
+                return true;
+            } else {
+
+                //Log.v(TAG,"Permission is revoked");
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                return false;
+            }
+        }
+        else { //permission is automatically granted on sdk<23 upon installation
+            //Log.v(TAG,"Permission is granted");
+            return true;
+        }
     }
 
     public void reload() {
@@ -87,11 +111,11 @@ public class WebViewActivity extends AppCompatActivity {
                         && !utils.getUserPrefs(utils.Passowrd, getApplicationContext()).isEmpty()
                         && !utils.getUserPrefs(utils.response, getApplicationContext()).isEmpty()) {
                     reload();
-                    webView.loadUrl("http://x.hkgws.com/x/servlet/Login_process?login_name=" + UserName + "&login_password=" + Passowrd + "&company_id=" + CompanyId + "&storecompany=" + response + "&isMobile=Y");
+                    //webView.loadUrl("http://x.hkgws.com/x/servlet/Login_process?login_name=" + UserName + "&login_password=" + Passowrd + "&company_id=" + CompanyId + "&storecompany=" + response + "&isMobile=Y");
                     ValidateUser();//if user and password changed from backend it should redirect user to login page
                 }
             }
-        }, 720000);
+        }, 90000);
     }
 
     @Override
@@ -188,7 +212,7 @@ public class WebViewActivity extends AppCompatActivity {
 
                             try {
                                 VolleyLog.v("Response:%n %s", response.toString(4));
-                                if(response.getString("login_status").equals("N")) {
+                                if(response.getString("login_status").equals("N") || !response.getString("menushow").equals(menushow)) {
 
                                     AlertDialog.Builder messageDialog = new AlertDialog.Builder(WebViewActivity.this);
                                     messageDialog.setMessage("Session exipred please login!");
@@ -203,6 +227,17 @@ public class WebViewActivity extends AppCompatActivity {
                                     });
                                     AlertDialog alert = messageDialog.create();
                                     alert.show();
+                                }
+                                else
+                                {
+                                    if(!utils.getUserPrefs(utils.ComapnyId, getApplicationContext()).isEmpty()
+                                            && !utils.getUserPrefs(utils.UserName, getApplicationContext()).isEmpty()
+                                            && !utils.getUserPrefs(utils.Passowrd, getApplicationContext()).isEmpty()
+                                            && !utils.getUserPrefs(utils.response, getApplicationContext()).isEmpty()) {
+                                        //reload();
+                                        webView.loadUrl("http://x.hkgws.com/x/servlet/Login_process?login_name=" + UserName + "&login_password=" + Passowrd + "&company_id=" + CompanyId + "&storecompany=" + response + "&isMobile=Y");
+                                       // ValidateUser();//if user and password changed from backend it should redirect user to login page
+                                    }
                                 }
                             }
                             catch (JSONException e) {
