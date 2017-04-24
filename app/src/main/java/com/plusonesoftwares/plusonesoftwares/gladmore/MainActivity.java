@@ -2,6 +2,7 @@ package com.plusonesoftwares.plusonesoftwares.gladmore;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -33,6 +35,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.ValueCallback;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.AdapterView;
@@ -84,6 +89,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final String TAG = MainActivity.class.getSimpleName();
     private BroadcastReceiver mRegistrationBroadcastReceiver;
 
+    //static WebView mWebView;
+    private ValueCallback<Uri> mUploadMessage;
+    public ValueCallback<Uri[]> uploadMessage;
+    public static final int REQUEST_SELECT_FILE = 100;
+    private final static int FILECHOOSER_RESULTCODE = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,13 +123,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             utils.setUserPrefs(utils.SubMenuPageUrl, "", getApplicationContext());
             utils.setUserPrefs(utils.SelectedItem, "", getApplicationContext());
-
-            webView = (WebView) findViewById(R.id.webView);
-            webView.getSettings().setJavaScriptEnabled(true);
-            webView.getSettings().setLoadWithOverviewMode(true);
-            webView.getSettings().setUseWideViewPort(true);
-            webView.setWebViewClient(new MyBrowser());
-            webView.loadUrl("http://x.hkgws.com/x/servlet/Login_process?login_name=" + UserName + "&login_password=" + Passowrd + "&company_id=" + CompanyId + "&storecompany=" + response + "&isMobile=Y");
 
             drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -166,8 +170,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         {
             Toast.makeText(getApplicationContext(), "onCreate Main: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
-        reload();
-
         //Firebase push block
         mRegistrationBroadcastReceiver = new BroadcastReceiver() {
             @Override
@@ -189,27 +191,105 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         };
 
-        isStoragePermissionGranted();
+        webView = (WebView) findViewById(R.id.webView);
+        webView.setWebViewClient(new MyBrowser());
+        webView.loadUrl("http://x.hkgws.com/x/servlet/Login_process?login_name=" + UserName + "&login_password=" + Passowrd + "&company_id=" + CompanyId + "&storecompany=" + response + "&isMobile=Y");
+
+        WebSettings mWebSettings = webView.getSettings();
+        mWebSettings.setJavaScriptEnabled(true);
+        mWebSettings.setSupportZoom(false);
+        mWebSettings.setAllowFileAccess(true);
+        mWebSettings.setAllowFileAccess(true);
+        mWebSettings.setAllowContentAccess(true);
+
+        webView.setWebChromeClient(new WebChromeClient()
+        {
+            // For 3.0+ Devices (Start)
+            // onActivityResult attached before constructor
+            protected void openFileChooser(ValueCallback uploadMsg, String acceptType)
+            {
+                mUploadMessage = uploadMsg;
+                Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+                i.addCategory(Intent.CATEGORY_OPENABLE);
+                i.setType("image/*");
+                startActivityForResult(Intent.createChooser(i, "File Browser"), FILECHOOSER_RESULTCODE);
+            }
+
+
+            // For Lollipop 5.0+ Devices
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            public boolean onShowFileChooser(WebView mWebView, ValueCallback<Uri[]> filePathCallback, WebChromeClient.FileChooserParams fileChooserParams)
+            {
+                if (uploadMessage != null) {
+                    uploadMessage.onReceiveValue(null);
+                    uploadMessage = null;
+                }
+
+                uploadMessage = filePathCallback;
+
+                Intent intent = fileChooserParams.createIntent();
+                try
+                {
+                    startActivityForResult(intent, REQUEST_SELECT_FILE);
+                } catch (ActivityNotFoundException e)
+                {
+                    uploadMessage = null;
+                    Toast.makeText(getApplicationContext(), "Cannot Open File Chooser", Toast.LENGTH_LONG).show();
+                    return false;
+                }
+                return true;
+            }
+
+            //For Android 4.1 only
+            protected void openFileChooser(ValueCallback<Uri> uploadMsg, String acceptType, String capture)
+            {
+                mUploadMessage = uploadMsg;
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType("image/*");
+                startActivityForResult(Intent.createChooser(intent, "File Browser"), FILECHOOSER_RESULTCODE);
+            }
+
+            protected void openFileChooser(ValueCallback<Uri> uploadMsg)
+            {
+                mUploadMessage = uploadMsg;
+                Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+                i.addCategory(Intent.CATEGORY_OPENABLE);
+                i.setType("image/*");
+                startActivityForResult(Intent.createChooser(i, "File Chooser"), FILECHOOSER_RESULTCODE);
+            }
+        });
+
+        reload();
     }
 
-    public  boolean isStoragePermissionGranted() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    == PackageManager.PERMISSION_GRANTED) {
-                Log.v(TAG,"Permission is granted");
-                return true;
-            } else {
-
-                Log.v(TAG,"Permission is revoked");
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-                return false;
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent)
+    {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+        {
+            if (requestCode == REQUEST_SELECT_FILE)
+            {
+                if (uploadMessage == null)
+                    return;
+                uploadMessage.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(resultCode, intent));
+                uploadMessage = null;
             }
         }
-        else { //permission is automatically granted on sdk<23 upon installation
-            Log.v(TAG,"Permission is granted");
-            return true;
+        else if (requestCode == FILECHOOSER_RESULTCODE)
+        {
+            if (null == mUploadMessage)
+                return;
+            // Use MainActivity.RESULT_OK if you're implementing WebView inside Fragment
+            // Use RESULT_OK only if you're implementing WebView inside an Activity
+            Uri result = intent == null || resultCode != MainActivity.RESULT_OK ? null : intent.getData();
+            mUploadMessage.onReceiveValue(result);
+            mUploadMessage = null;
         }
+        else
+            Toast.makeText(getApplicationContext(), "Failed to Upload Image", Toast.LENGTH_LONG).show();
     }
+
     public void reload() {
 
         final Handler handler = new Handler();
