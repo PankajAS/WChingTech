@@ -307,7 +307,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     ValidateUser();//validate user after some time interval
                 }
             }
-        }, 90000);
+        }, 180000);
     }
 
     @Override
@@ -499,6 +499,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         public void onPageFinished(WebView view, String url) {
             if (utils.getUserPrefs(utils.SubMenuPageUrl, getApplicationContext()) != null && !utils.getUserPrefs(utils.SubMenuPageUrl, getApplicationContext()).isEmpty()) {
                 progressDialog.dismiss();
+                utils.setUserPrefs(utils.SubMenuPageUrl, "", getApplicationContext());
             }
         }
     }

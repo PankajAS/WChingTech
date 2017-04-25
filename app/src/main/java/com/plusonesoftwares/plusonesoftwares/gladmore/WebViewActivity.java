@@ -201,7 +201,7 @@ public class WebViewActivity extends AppCompatActivity {
                     ValidateUser();//if user and password changed from backend it should redirect user to login page
                 }
             }
-        }, 90000);
+        }, 180000);
     }
 
     @Override
@@ -220,7 +220,6 @@ public class WebViewActivity extends AppCompatActivity {
         @Override
         public void onPageFinished(WebView view, String url) {
               progressDialog.dismiss();
-
         }
     }
 
