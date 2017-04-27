@@ -19,7 +19,7 @@ import android.text.Html;
 import android.text.TextUtils;
 import android.util.Patterns;
 
-import com.hkgws.gladmore.R;
+import com.wchingtech.com.R;
 import com.plusonesoftwares.plusonesoftwares.gladmore.app.Config;
 
 import java.io.IOException;

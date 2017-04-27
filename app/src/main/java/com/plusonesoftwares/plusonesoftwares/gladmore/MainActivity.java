@@ -57,7 +57,7 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.hkgws.gladmore.R;
+import com.wchingtech.com.R;
 import com.plusonesoftwares.plusonesoftwares.gladmore.app.Config;
 import com.plusonesoftwares.plusonesoftwares.gladmore.util.NotificationUtils;
 import com.squareup.picasso.Picasso;

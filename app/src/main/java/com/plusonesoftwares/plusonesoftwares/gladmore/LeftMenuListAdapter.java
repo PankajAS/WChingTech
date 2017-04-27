@@ -12,7 +12,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.plusonesoftwares.plusonesoftwares.gladmore.FontManager.FontManager;
-import com.hkgws.gladmore.R;
+import com.wchingtech.com.R;
 
 import java.util.List;
 

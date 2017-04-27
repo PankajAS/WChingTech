@@ -9,7 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.hkgws.gladmore.R;
+import com.wchingtech.com.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;

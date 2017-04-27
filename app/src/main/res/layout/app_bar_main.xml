@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.hkgws.gladmore.com.plusonesoftwares.plusonesoftwares.gladmore.MainActivity">
+    tools:context="com.wchingtech.com.com.plusonesoftwares.plusonesoftwares.gladmore.MainActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
